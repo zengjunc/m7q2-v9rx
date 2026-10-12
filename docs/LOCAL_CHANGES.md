@@ -83,3 +83,9 @@ PF 十帧结果与既有 2290 帧运行的前十帧最大差异约 4.8e-7；BEVL
 ### 首次 Git 上传检查
 
 修正 .gitignore 中 data/ 为根目录限定的 /data/，避免错误排除 third_party/bevloc/aeromatch/data 中的数据加载源码。机器配置、实际数据、权重、环境与实验输出仍忽略。团队 main 分支保留官方历史。
+
+### 共享相对路径与本机环境绑定
+
+新增 scripts/local/link_envs.py，将每台机器现有环境绑定至 .envs/pf、cuvslam、bevloc、bevloc-native。共享配置中环境/数据/地图/权重/输出全部使用仓库相对路径；project.yaml 只作可选覆盖，缺省自动加载共享模板。迁移 raw/extracted/processed 至主仓库 data/，不复制大数据。原作者未使用的第三方配置和历史结果中的绝对路径保留作出处，不是当前运行参数。
+
+这项调整在首次推送成功前进行；远端仍为空，待 GitHub 认证后上传。

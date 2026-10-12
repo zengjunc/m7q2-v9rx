@@ -10,7 +10,7 @@ config/                 官方配置 + train_tartandrive.yaml（本地单数据�
 preprocessing/          官方预处理
 scripts/local/          我们的数据工具、运行适配、评估、同步打包
 third_party/            BEVLoc、robot-eye、rosbagkit 及 TartanDrive 资源
-config/local/           配置模板；project.yaml 是本机配置，不进入版本控制
+config/local/           共享相对路径模板；project.yaml 是可选本机覆盖，不进入版本控制
 weights/                公开预训练权重，不进入版本控制
 data/                   BEVLoc 输入与地图，不进入版本控制
 output/                 当前结果与 archive/ 历史结果，不进入版本控制
@@ -22,20 +22,26 @@ output/                 当前结果与 archive/ 历史结果，不进入版本�
 
 ## 配置与运行
 
-先使用 BEV-Patch-PF 环境：
+进入自己克隆的仓库根目录，不要求固定用户名或服务器目录：
 
 ```bash
-conda activate /mnt/data/conda_envs/bev-patch-pf
-cd /home/zengjunchao/code/auto_drive/bev-patch-pf
+cd auto_drive
+conda activate bev-patch-pf
+python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
 ```
 
-本机 `config/local/project.yaml` 已配置好，复用既有数据、地图和权重。组员复制模板并填写自己的路径：
+`config/local/project.example.yaml` 是共享配置，所有路径相对仓库根目录。启动器优先使用可选的 project.yaml，否则直接加载共享模板；组员通常不必修改配置。
+
+机器之间的差异只在环境绑定，安装后一次性执行：
 
 ```bash
-cp config/local/project.example.yaml config/local/project.yaml
+python scripts/local/link_envs.py \
+  --cuvslam /本机/cuVSLAM环境 \
+  --bevloc /本机/BEVLoc虚拟环境 \
+  --bevloc-native /本机/GDAL环境
 ```
 
-所有相对路径以本仓库根目录为基准；不需要修改脚本源码。
+这些仅是本机绑定命令中的路径，不写入共享配置；绑定保存在被 Git 忽略的 .envs/。数据统一放在 data/raw、data/extracted、data/TartanDrive2、data/bevloc、data/maps，公开权重放在 weights。
 
 当前测试轨迹是 `2023-11-02-16-00-43_down_meadows`（TD08），默认使用 2290 帧版本。已有深度和 cuVSLAM 文件，可以直接运行 PF：
 
@@ -55,7 +61,7 @@ python scripts/local/run.py pf --limit 10
 python scripts/local/run.py bevloc --limit 2       # 2 个 batch，每批最多 8 帧
 python scripts/local/run.py cuvslam --limit 10    # 写 probe 文件，保留完整 VO 文件
 python scripts/local/run.py pf --scene SCENE_NAME --output output/my_run
-python scripts/local/run.py pf --checkpoint /path/to/trained.pth --output output/trained_test
+python scripts/local/run.py pf --checkpoint output/train/某次训练/实际权重.pth --output output/trained_test
 ```
 
 结果默认写到 `output/local/<scene>/<method>/`，含轨迹、`metrics.json` 和轨迹图。同名目录再次运行会覆盖对应结果。`--dry-run` 只打印命令，不启动任务。
@@ -109,12 +115,13 @@ git push -u origin HEAD
 ```bash
 git clone https://github.com/zengjunc/auto_drive.git bev-patch-pf
 cd bev-patch-pf
-cp config/local/project.example.yaml config/local/project.yaml
+conda activate bev-patch-pf
+python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
 ```
 
 日常在自己的开发分支提交，再合并至团队主分支；更新代码使用 `git pull --ff-only`。上游更新通过 upstream 获取并审阅，不直接覆盖本地适配。
 
-Git 管理源码、配置模板、必要第三方源码和文档；本机 project.yaml、数据、地图、权重、环境与运行结果由 .gitignore 排除，组员单独准备并配置路径。团队远端为 origin，官方远端为 upstream。
+Git 管理源码、配置模板、必要第三方源码和文档；本机 project.yaml、数据、地图、权重、环境与运行结果由 .gitignore 排除，组员单独准备，按统一目录放置；每台机器只绑定环境。团队远端为 origin，官方远端为 upstream。
 
 - [环境与数据格式](docs/LOCAL_SETUP.md)
 - [Baseline 运行与评估约定](docs/BASELINES.md)

@@ -2,14 +2,23 @@
 
 ## 环境边界
 
-统一启动器从 `project.yaml` 选择解释器，不需要来回激活环境。运行启动器本身需要 PyYAML，推荐从 PF 环境执行。
+共享配置使用仓库相对路径，不写用户名或服务器目录。每台机器安装环境后，将环境前缀绑定至固定名称：
 
-| 配置项 | 当前服务器 | 用途 |
+```bash
+conda activate bev-patch-pf
+python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+python scripts/local/link_envs.py --cuvslam /本机/cuVSLAM环境 \
+  --bevloc /本机/BEVLoc虚拟环境 --bevloc-native /本机/GDAL环境
+```
+
+| 配置项 | 共享路径 | 用途 |
 |---|---|---|
-| environments.pf | `/mnt/data/conda_envs/bev-patch-pf/bin/python` | PF、训练、提取、深度和 VO 基线评估 |
-| environments.cuvslam | `../.venv-cuvslam/bin/python` | 编译后的 cuVSLAM Python 接口 |
-| environments.bevloc | `../.venv-bevloc/bin/python` | BEVLoc 推理 |
-| environments.bevloc_native_prefix | `../.env-bevloc` | GDAL/PROJ 原生库 |
+| environments.pf | `.envs/pf/bin/python` | PF、训练、提取、深度与 VO 评估 |
+| environments.cuvslam | `.envs/cuvslam/bin/python` | cuVSLAM Python 接口 |
+| environments.bevloc | `.envs/bevloc/bin/python` | BEVLoc 推理 |
+| environments.bevloc_native_prefix | `.envs/bevloc-native` | GDAL/PROJ 原生库 |
+
+.envs 是本机链接，不上传 Git，不复制或移动已安装的 conda/venv。组员仅处理这一次环境绑定，通常不修改共享 YAML。启动器本身需 PyYAML，从 PF 环境执行即可。
 
 PF 安装参考官方 README/pyproject.toml，Python 3.12、conda-forge manifpy；启动器设置环境 lib 路径，避免加载过旧的系统 libstdc++。数据工具额外需要 boto3、rosbags；rosbagkit 源码已随仓库提供并加入 PYTHONPATH。
 
@@ -34,7 +43,7 @@ SCENE/
   pycuvslam.csv        # timestamp,x,y,z,qx,qy,qz,qw
 ```
 
-图像文件名、深度、时间戳及位姿行数对应。2290 帧完整版本与 2286 帧过滤版本分别位于当前服务器的 processed_header / processed_sync；修改 processed_root 可切换，不能混用不同版本的 VO/深度。
+图像文件名、深度、时间戳及位姿行数对应。2290 帧完整版本与 2286 帧过滤版本分别位于主仓库的 data/TartanDrive2 / data/TartanDrive2_sync；修改 processed_root 可切换，不能混用不同版本的 VO/深度。
 
 extracted_root 下保留完整 `odom.csv`、`tartanvo_odom.csv`、`lidar_odom.csv`；raw_root 下为 `bags/SCENE/*.bag`。BEVLoc 输入适配从这些文件与真实 IMU 创建自身 loader 的目录布局，并用硬链接复用图像/深度，需在同一文件系统。
 

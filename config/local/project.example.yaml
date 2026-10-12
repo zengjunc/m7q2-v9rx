@@ -1,11 +1,11 @@
-# LOCAL ADDITION. Relative paths are resolved against the repository root.
+# Paths are relative to the repository root; bind environments with link_envs.py.
 scene: 2023-11-02-16-00-43_down_meadows
 cpu_threads: 4
 environments:
-  pf: /path/to/conda/env/bin/python
-  cuvslam: /path/to/cuvslam/venv/bin/python
-  bevloc: /path/to/bevloc/venv/bin/python
-  bevloc_native_prefix: /path/to/gdal/conda/env
+  pf: .envs/pf/bin/python
+  cuvslam: .envs/cuvslam/bin/python
+  bevloc: .envs/bevloc/bin/python
+  bevloc_native_prefix: .envs/bevloc-native
 paths:
   raw_root: data/raw
   extracted_root: data/extracted

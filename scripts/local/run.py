@@ -16,7 +16,10 @@ LOCAL = ROOT / 'scripts/local'
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('command', choices=['download','extract','preprocess','depth','prepare-bevloc','pf','train','cuvslam','superodom','bevloc'])
-    p.add_argument('--config', type=Path, default=ROOT / 'config/local/project.yaml')
+    default_config = ROOT / 'config/local/project.yaml'
+    if not default_config.exists():
+        default_config = ROOT / 'config/local/project.example.yaml'
+    p.add_argument('--config', type=Path, default=default_config)
     p.add_argument('--scene')
     p.add_argument('--limit', type=int, help='PF / cuVSLAM frame limit, or BEVLoc batch limit')
     p.add_argument('--output', type=Path)
@@ -30,7 +33,7 @@ def main():
     if a.limit is not None and (a.limit < 1 or a.command not in ['pf','cuvslam','bevloc']):
         p.error('--limit must be positive and is only supported for pf/cuvslam/bevloc')
     if not a.config.exists():
-        p.error('Copy config/local/project.example.yaml to project.yaml and edit local paths')
+        p.error(f'Missing configuration: {a.config}')
     cfg = yaml.safe_load(a.config.read_text())
     def path(value):
         value = Path(os.path.expandvars(str(value))).expanduser()

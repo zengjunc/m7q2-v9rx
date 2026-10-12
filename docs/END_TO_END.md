@@ -25,10 +25,10 @@
 
 训练不要求 `pycuvslam.csv`；PF 时序推理需要它。训练的验证集评估网络匹配能力，完整轨迹推理才评估位置 RMSE，二者不能互相替代。
 
-以下命令默认在仓库根目录执行。本机是：
+以下命令默认在自己克隆的仓库根目录执行，例如仓库目录名为 auto_drive：
 
 ```bash
-cd /home/zengjunchao/code/auto_drive/bev-patch-pf
+cd auto_drive
 ```
 
 组员通过 Git clone 获取代码后，将该路径换成自己的仓库路径。Git 仓库不包含地图、数据、权重和 Python/CUDA 环境。
@@ -37,10 +37,10 @@ cd /home/zengjunchao/code/auto_drive/bev-patch-pf
 
 ### 1.1 本机已有环境
 
-本机不需要重复安装：
+本机已绑定环境，不需要重复安装：
 
 ```bash
-conda activate /mnt/data/conda_envs/bev-patch-pf
+conda activate ./.envs/pf
 python -c 'import torch, manifpy; print(torch.__version__, torch.cuda.is_available())'
 ```
 
@@ -73,6 +73,7 @@ python -m pip install boto3 rosbags
 python -m pip install --no-deps --no-build-isolation -e third_party/rosbagkit
 export LD_LIBRARY_PATH="$CONDA_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 python -m pip check
+python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
 ```
 
 `pyproject.toml` 的部分依赖未固定版本，所以以上不是所有操作系统的完整锁文件。安装后检查项目需要的 DINOv3 ConvNeXt 模型名称是否被 timm 识别：
@@ -93,21 +94,14 @@ PY
 
 ### 2.1 配置文件
 
-新机器复制模板，本机已有配置则不用覆盖：
-
-```bash
-cp config/local/project.example.yaml config/local/project.yaml
-```
-
-编辑 `project.yaml`。相对路径都以仓库根目录为基准，重点是：
+共享模板 `config/local/project.example.yaml` 中所有路径均相对仓库根目录，启动器没有 project.yaml 时自动使用模板，通常无需修改路径：
 
 ```yaml
-scene: 2023-11-02-16-00-43_down_meadows
 environments:
-  pf: /你的主环境/bin/python
-  cuvslam: /你的cuVSLAM环境/bin/python
-  bevloc: /你的BEVLoc环境/bin/python
-  bevloc_native_prefix: /你的GDAL环境
+  pf: .envs/pf/bin/python
+  cuvslam: .envs/cuvslam/bin/python
+  bevloc: .envs/bevloc/bin/python
+  bevloc_native_prefix: .envs/bevloc-native
 paths:
   raw_root: data/raw
   extracted_root: data/extracted
@@ -117,9 +111,20 @@ paths:
   output_root: output/local
 ```
 
-这是需要理解的关键字段，不要用上面的片段替换完整模板。暂不运行 baseline 时，BEVLoc 字段可先保留模板值；训练不要求 cuVSLAM 已安装。
+这是关键字段摘要，完整字段以模板为准。每台机器只需绑定安装好的环境：
 
-本机 raw/extracted/processed_root 仍指向外部 `tartan_drive_2.0-main/downloads/TartanDrive2_pipeline`；权重和地图已移入主仓库。组员无需复制服务器目录结构，只要配置自己的真实位置。
+```bash
+conda activate bev-patch-pf
+python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+```
+
+需要改变数据版本或其他参数时，才复制模板为可选本机覆盖：
+
+```bash
+cp config/local/project.example.yaml config/local/project.yaml
+```
+
+project.yaml 不上传 Git。当前服务器的 raw、extracted、processed 数据已移入上述统一目录；额外过滤版本在 data/TartanDrive2_sync。移动数据不改变内容，也不复制一份大数据。
 
 ### 2.2 地图
 
@@ -131,7 +136,10 @@ paths:
 python - <<'PY'
 from pathlib import Path
 import yaml, rasterio
-cfg = yaml.safe_load(Path('config/local/project.yaml').read_text())
+config = Path('config/local/project.yaml')
+if not config.exists():
+    config = Path('config/local/project.example.yaml')
+cfg = yaml.safe_load(config.read_text())
 p = Path(cfg['paths']['map']).expanduser()
 with rasterio.open(p) as m:
     print('CRS:', m.crs, 'resolution:', m.res, 'bounds:', m.bounds)
@@ -255,7 +263,10 @@ python scripts/local/run.py depth --scene "$TEST_SCENE"
 python - <<'PY'
 from pathlib import Path
 import yaml, numpy as np, cv2
-cfg = yaml.safe_load(Path('config/local/project.yaml').read_text())
+config = Path('config/local/project.yaml')
+if not config.exists():
+    config = Path('config/local/project.example.yaml')
+cfg = yaml.safe_load(config.read_text())
 root = Path(cfg['paths']['processed_root']).expanduser()
 scenes = ['meadows_2023-09-14-11-45-21',
           'meadows_2023-09-14-12-07-28',
@@ -314,7 +325,7 @@ CUVSLAM_BUILD_DIR=/tmp/bev-cuvslam-build \
 .venv-cuvslam/bin/python -c 'import cuvslam; print(cuvslam.Camera())'
 ```
 
-SM86 对应本机 RTX3090；其他 GPU 应修改架构，CUDA 路径也应与机器一致。设置 project.yaml 的 environments.cuvslam 为该解释器的绝对路径。这里只使用双目 Odometry 模式，关闭 cuNLS；不要将它当成所有模式通用配置。官方支持先构建库、再用 CUVSLAM_BUILD_DIR 安装 Python 绑定，参见 [固定提交 README](https://github.com/nvidia-isaac/cuVSLAM/blob/94be2b8baf18345fb078aec5af29e845bd61a4a6/README.md)。
+SM86 对应本机 RTX3090；其他 GPU 应修改架构，CUDA 路径也应与机器一致。安装后执行 `python scripts/local/link_envs.py --cuvslam .venv-cuvslam`，共享配置不需要修改。这里只使用双目 Odometry 模式，关闭 cuNLS；不要将它当成所有模式通用配置。官方支持先构建库、再用 CUVSLAM_BUILD_DIR 安装 Python 绑定，参见 [固定提交 README](https://github.com/nvidia-isaac/cuVSLAM/blob/94be2b8baf18345fb078aec5af29e845bd61a4a6/README.md)。
 
 ## 6. BEV-Patch-PF 训练与网络验证
 
@@ -373,7 +384,7 @@ python scripts/local/run.py train --output output/train/tartandrive_small \
 如需用现有整模型权重初始化，在命令后加：
 
 ```text
-ckpt_path=/绝对路径/weights/BEV-Patch-Net_e4_3.85.pth
+ckpt_path=weights/BEV-Patch-Net_e4_3.85.pth
 ```
 
 注意两个细节：project.yaml 的 pf_checkpoint 只控制推理，不自动控制训练；官方 train.py 的 ckpt_path 当前用于加载模型参数，未恢复训练 epoch、优化器与调度器，不能把它描述成完整断点续训。
@@ -395,9 +406,9 @@ python scripts/local/run.py train --output output/train/tartandrive_full \
 python -m pip install accelerate
 accelerate launch --multi_gpu --num_processes=2 --mixed_precision=fp16 \
   src/train_ddp.py --config-name=train_tartandrive \
-  datasets.0.root=/绝对路径/processed_root \
-  datasets.0.geo_tiff_path=/绝对路径/data/maps/gascola.tif \
-  output_dir=/绝对路径/output/train/tartandrive_ddp wandb=False
+  datasets.0.root=data/TartanDrive2 \
+  datasets.0.geo_tiff_path=data/maps/gascola.tif \
+  output_dir=output/train/tartandrive_ddp wandb=False
 ```
 
 此多 GPU 命令沿用上游入口，本次整理未验证完整 DDP 训练。先完成单 GPU 流程再扩大。
@@ -454,7 +465,7 @@ python scripts/local/run.py pf --scene "$TEST_SCENE" \
 
 ```bash
 python scripts/local/run.py pf --scene "$TEST_SCENE" \
-  --checkpoint /绝对路径/output/train/tartandrive_small/实际文件名.pth \
+  --checkpoint output/train/tartandrive_small/实际文件名.pth \
   --output output/test/pf_trained_full
 ```
 
@@ -504,7 +515,7 @@ cuVSLAM 环境安装见第 5 节；Super Odometry 使用提取后的 lidar_odom�
 ## 10. 组员同步清单
 
 - 代码：团队 Git 仓库，首次 git clone，后续在对应分支拉取更新。
-- 本地配置：按 project.example.yaml 填写自己的 project.yaml。
+- 环境：各自绑定 .envs；共享模板默认可用，只有需要本机覆盖时才创建 project.yaml。
 - 数据：选定场景的完整处理目录；需要重新提取或 BEVLoc IMU 时保留对应 bag。
 - 地图和权重：另行传输，不进入 Git 版本管理。
 - 实验记录：train 输出的 config.yaml、checkpoint、val metrics，以及 PF 输出的 config.yaml、轨迹、位置 metrics 和图。
