@@ -136,7 +136,7 @@ python scripts/local/run.py train --dry-run
 
 FP16 AMP 在新、旧环境的同一训练样本上都连续跳过了 8 次更新，GradScaler 从 65536 降至 256；损失有限，但参数没有更新。未确定完整根因，不能直接宣称已修复 AMP。FP32 真正完成更新与网络验证，因此参考训练设为 amp=False。
 
-Super Odometry 此处仍使用数据集预计算轨迹；统一环境不代表能直接运行原 ROS2 SuperOdom 工程。没有重新跑完整训练或全量轨迹性能实验，也没有测试其他 GPU/操作系统。
+Super Odometry 此处仍使用数据集预计算轨迹；统一环境不代表能直接运行原 ROS2 SuperOdom 工程。正式完整训练未执行，也没有测试其他 GPU/操作系统；当前测试轨迹的四种运行方式已经完整重跑，结果见下节。
 
 详细报告和日志位于 `output/verification/unified_*`，不上传大文件。
 
@@ -149,3 +149,22 @@ python scripts/local/run.py pf --config config/local/project.multi-env.yaml
 ```
 
 此配置继续使用 .envs 中已有的独立环境绑定；不重新安装、不影响原环境。新机器通常无需准备这套回退方案。
+
+## 7. 后续整条轨迹复查（2026-10-12）
+
+在同一统一环境下完整运行当前场景，并保留原 PF 运动文件；cuVSLAM 重跑在独立输出目录中进行。
+
+| 方法 | 完整运行输出 | RMSE (m) |
+|---|---|---:|
+| BEV-Patch-PF | 2290 个位置 | 5.3631 |
+| BEVLoc | 2290 张图像、287 批参考、283 个有效位置 | 17.0879 |
+| cuVSLAM | 2290 帧，2290 帧跟踪成功 | 30.1199 |
+| Super Odometry 预计算 | 2289 个共同覆盖时间点 | 8.9247 |
+
+四个进程均正常结束；保存的轨迹数值有限、时间戳严格递增。BEVLoc 4 个无预测批次与旧结果相同，不补点冒充逐帧输出。以上评估频率/参考辅助不同，不作为统一采样条件下的排行榜。
+
+为检查 PF 与历史 9.274 m 的差异，额外用原环境运行同一当前入口：两环境 RMSE 均为 5.3631 m，完整位置最大差小于 0.0001 m。因此不能把历史记录差异归因于环境合并；旧结果保留为旧入口实验记录，未独立定位旧记录差异的全部原因。BEVLoc 与旧完整运行 CSV 完全一致。
+
+本轮 cuVSLAM 是新绑定的一次完整重跑，证明能正常跟踪/导出，不宣称其结果与历史存储 VO 完全等价。FP16 AMP 的限制不变。正式 train/val 完整训练和原 ROS2 SuperOdom 工程仍不在本次验证范围。
+
+详细记录：requirements/unified-validation.json；运行产物：output/verification/unified_full/。

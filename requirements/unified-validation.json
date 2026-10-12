@@ -60,5 +60,44 @@
     "checkpoint_reloaded_for_pf": true
   },
   "amp_limit": "same sample: both old and unified FP16 environments skipped 8 updates; no claimed fix",
-  "coverage": "short inference and one FP32 training/validation step; not full training or cross-platform validation"
+  "coverage": "full current trajectory for all four project methods, plus FP32 train/validation/save/reload probe; not full dataset training or ROS2 SuperOdom execution",
+  "full_trajectory_validation": {
+    "scene": "2023-11-02-16-00-43_down_meadows",
+    "methods": {
+      "pf": {
+        "frames": 2290,
+        "RMSE_m": 5.363149052464149,
+        "mean_m": 4.510598242851675,
+        "median_m": 4.1912506795231455
+      },
+      "bevloc": {
+        "frames": 283,
+        "RMSE_m": 17.08787406372586,
+        "mean_m": 11.704836401759554,
+        "median_m": 7.256510003402155,
+        "input_images": 2290,
+        "reference_points": 287
+      },
+      "cuvslam": {
+        "frames": 2290,
+        "RMSE_m": 30.11985103530764,
+        "mean_m": 21.67892826209741,
+        "median_m": 12.107563578884935,
+        "tracked_frames": 2290
+      },
+      "superodom": {
+        "frames": 2289,
+        "RMSE_m": 8.924712441883024,
+        "mean_m": 5.572915721389577,
+        "median_m": 1.4894781798554386
+      }
+    },
+    "pf_old_env_same_entry_rmse_m": 5.363148511540043,
+    "pf_old_vs_unified_max_xy_difference_m": 1.0816090437615771e-05,
+    "bevloc_full_old_vs_unified_max_difference": 0.0,
+    "all_runs_completed": true,
+    "all_outputs_finite_and_timestamps_increasing": true,
+    "original_pf_motion_input_preserved": true,
+    "note": "Historical PF 9.274 m used previous runner; same current entry old/unified environments both yield 5.363 m. No claim that fresh cuVSLAM replay is numerically identical to historical stored VO."
+  }
 }
