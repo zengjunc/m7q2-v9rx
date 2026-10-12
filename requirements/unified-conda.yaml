@@ -1,0 +1,9 @@
+name: bev-unified
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.15
+  - numpy=1.26.4
+  - manifpy=0.0.5
+  - gdal=3.13.3
+  - pip

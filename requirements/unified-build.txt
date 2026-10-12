@@ -1,0 +1,5 @@
+# Build tools used for the verified CPython 3.12 binding.
+cmake==3.31.10
+nanobind==3.1.0
+scikit-build-core==1.1.1
+ninja==1.13.2

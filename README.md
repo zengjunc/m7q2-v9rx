@@ -22,26 +22,16 @@ output/                 当前结果与 archive/ 历史结果，不进入版本�
 
 ## 配置与运行
 
-进入自己克隆的仓库根目录，不要求固定用户名或服务器目录：
+推荐共用一个环境。安装步骤和固定依赖见 [统一环境参考标准](docs/UNIFIED_ENV.md)：
 
 ```bash
 cd auto_drive
-conda activate bev-patch-pf
-python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+conda activate ./.env-unified
 ```
 
-`config/local/project.example.yaml` 是共享配置，所有路径相对仓库根目录。启动器优先使用可选的 project.yaml，否则直接加载共享模板；组员通常不必修改配置。
+`config/local/project.example.yaml` 的数据/模型路径均相对仓库根目录，所有方法使用 `.env-unified/bin/python`。启动器优先读取可选 project.yaml，否则自动使用共享模板，组员通常不必修改 YAML，也不需要环境链接。
 
-机器之间的差异只在环境绑定，安装后一次性执行：
-
-```bash
-python scripts/local/link_envs.py \
-  --cuvslam /本机/cuVSLAM环境 \
-  --bevloc /本机/BEVLoc虚拟环境 \
-  --bevloc-native /本机/GDAL环境
-```
-
-这些仅是本机绑定命令中的路径，不写入共享配置；绑定保存在被 Git 忽略的 .envs/。数据统一放在 data/raw、data/extracted、data/TartanDrive2、data/bevloc、data/maps，公开权重放在 weights。
+数据统一位于 data/raw、data/extracted、data/TartanDrive2、data/bevloc、data/maps，公开权重位于 weights。旧多环境配置和 .envs 绑定仍可通过 project.multi-env.yaml 显式使用。
 
 当前测试轨迹是 `2023-11-02-16-00-43_down_meadows`（TD08），默认使用 2290 帧版本。已有深度和 cuVSLAM 文件，可以直接运行 PF：
 
@@ -115,13 +105,14 @@ git push -u origin HEAD
 ```bash
 git clone https://github.com/zengjunc/auto_drive.git bev-patch-pf
 cd bev-patch-pf
-conda activate bev-patch-pf
-python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+
+# 按 docs/UNIFIED_ENV.md 安装一次后：
+conda activate ./.env-unified
 ```
 
 日常在自己的开发分支提交，再合并至团队主分支；更新代码使用 `git pull --ff-only`。上游更新通过 upstream 获取并审阅，不直接覆盖本地适配。
 
-Git 管理源码、配置模板、必要第三方源码和文档；本机 project.yaml、数据、地图、权重、环境与运行结果由 .gitignore 排除，组员单独准备，按统一目录放置；每台机器只绑定环境。团队远端为 origin，官方远端为 upstream。
+Git 管理源码、配置模板、必要第三方源码和文档；本机 project.yaml、数据、地图、权重、环境与运行结果由 .gitignore 排除，组员单独准备，按统一目录放置；每台机器在仓库内安装统一环境即可。团队远端为 origin，官方远端为 upstream。
 
 - [环境与数据格式](docs/LOCAL_SETUP.md)
 - [Baseline 运行与评估约定](docs/BASELINES.md)

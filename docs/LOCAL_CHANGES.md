@@ -89,3 +89,9 @@ PF 十帧结果与既有 2290 帧运行的前十帧最大差异约 4.8e-7；BEVL
 新增 scripts/local/link_envs.py，将每台机器现有环境绑定至 .envs/pf、cuvslam、bevloc、bevloc-native。共享配置中环境/数据/地图/权重/输出全部使用仓库相对路径；project.yaml 只作可选覆盖，缺省自动加载共享模板。迁移 raw/extracted/processed 至主仓库 data/，不复制大数据。原作者未使用的第三方配置和历史结果中的绝对路径保留作出处，不是当前运行参数。
 
 这项调整在首次推送成功前进行；远端仍为空，待 GitHub 认证后上传。
+
+### 统一环境验证与参考依赖
+
+新增 .env-unified 独立环境、requirements/unified* 与 requirements/locks 版本清单，以及 docs/UNIFIED_ENV.md。共同使用 Python 3.12、Torch 2.6/CUDA12.4、Transformers4.38.2；固定 PyArrow18.1 避免 NumPy2 要求。cuVSLAM 新编译 Python3.12 绑定，原生库独立安装。四方法推理和 FP32 训练步/网络验证通过。默认模板和本机配置改用单环境；旧 .envs 绑定和 project.multi-env.yaml 保留。
+
+统一配置新增 training_overrides.amp=false，启动器将其传给未修改的官方训练入口；用户 CLI 覆盖优先。FP16 AMP 的连续跳步在旧/新环境均复现，未宣称已修复。环境创建与新配置未修改旧环境的软件包。

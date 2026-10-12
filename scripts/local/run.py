@@ -100,7 +100,9 @@ def main():
         # Invoke the original training pipeline; only select the TartanDrive dataset/config.
         commands = [cmd+[str(ROOT/'src/train.py'),'--config-name=train_tartandrive',
                          f'datasets.0.root={loc("processed_root")}',f'datasets.0.geo_tiff_path={loc("map")}',
-                         f'output_dir={output}', 'wandb=False', *extra]]
+                         f'output_dir={output}', 'wandb=False',
+                         *[f'{key}={str(value).lower() if isinstance(value, bool) else value}'
+                           for key, value in cfg.get('training_overrides', {}).items()], *extra]]
     elif a.command == 'cuvslam':
         commands = [cmd+[str(LOCAL/'track_cuvslam.py'),'--scene-dir',str(data)]]
         if a.limit: commands[0] += ['--limit',str(a.limit)]

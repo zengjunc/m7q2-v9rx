@@ -1,11 +1,11 @@
-# Paths are relative to the repository root; bind environments with link_envs.py.
+# Recommended unified environment; all paths relative to repository root.
 scene: 2023-11-02-16-00-43_down_meadows
 cpu_threads: 4
 environments:
-  pf: .envs/pf/bin/python
-  cuvslam: .envs/cuvslam/bin/python
-  bevloc: .envs/bevloc/bin/python
-  bevloc_native_prefix: .envs/bevloc-native
+  pf: .env-unified/bin/python
+  cuvslam: .env-unified/bin/python
+  bevloc: .env-unified/bin/python
+  bevloc_native_prefix: .env-unified
 paths:
   raw_root: data/raw
   extracted_root: data/extracted
@@ -17,3 +17,5 @@ paths:
   pf_checkpoint: weights/BEV-Patch-Net_e4_3.85.pth
   bevloc_checkpoint: weights/bevloc-b=8-g=resnet101-a=resnet101-5.ckpt
   output_root: output/local
+training_overrides:
+  amp: false

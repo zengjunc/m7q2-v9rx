@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-12",
+  "platform": "Linux x86-64, RTX3090 SM86, CUDA Toolkit 12.4",
+  "python": "3.12.15",
+  "versions": {
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "numpy": "1.26.4",
+    "timm": "1.0.30",
+    "transformers": "4.38.2",
+    "huggingface-hub": "0.36.2",
+    "pyarrow": "18.1.0",
+    "pytorch-lightning": "2.5.6",
+    "gtsam": "4.2.1",
+    "open3d-cpu": "0.19.0",
+    "cuvslam": "17.0.0"
+  },
+  "isolated": true,
+  "pip_check": "No broken requirements found.",
+  "methods": {
+    "pf": {
+      "frames": 10,
+      "RMSE_m": 0.5958070162015192,
+      "mean_m": 0.5957980367357665,
+      "median_m": 0.5957529709169418
+    },
+    "bevloc": {
+      "frames": 2,
+      "RMSE_m": 0.024000678014857432,
+      "mean_m": 0.021336036742788406,
+      "median_m": 0.021336036742788406
+    },
+    "cuvslam": {
+      "frames": 10,
+      "RMSE_m": 0.009475919110209051,
+      "mean_m": 0.008890302684260633,
+      "median_m": 0.00991432984238671
+    },
+    "superodom": {
+      "frames": 2289,
+      "RMSE_m": 8.924712441883024,
+      "mean_m": 5.572915721389577,
+      "median_m": 1.4894781798554386
+    },
+    "trained_reload": {
+      "frames": 2,
+      "RMSE_m": 0.5902680905570097,
+      "mean_m": 0.5902639288340796,
+      "median_m": 0.5902639288340796
+    }
+  },
+  "pf_max_difference_vs_old": 1.000240445137024e-06,
+  "bevloc_difference_vs_old": 0.0,
+  "training": {
+    "amp": false,
+    "loss": 6.5680131912231445,
+    "max_parameter_change": 0.00010013580322265625,
+    "validation_z_sep": 2.598278045654297,
+    "checkpoint_matches": true,
+    "checkpoint_reloaded_for_pf": true
+  },
+  "amp_limit": "same sample: both old and unified FP16 environments skipped 8 updates; no claimed fix",
+  "coverage": "short inference and one FP32 training/validation step; not full training or cross-platform validation"
+}

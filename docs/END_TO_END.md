@@ -2,7 +2,7 @@
 
 更新：2026-10-12。本文件是交接给组员的主流程。主方法的训练、网络、损失与粒子滤波沿用开源代码；我们的统一入口在 `scripts/local/`。
 
-**当前服务器已完成环境安装和第一条测试轨迹的预处理、深度、VO、公开权重推理。BEV-Patch-PF 重新训练尚未完成，本次仅验证了训练配置解析。** 以下训练命令用于下一步执行，不是已训练成功的实验记录。
+**当前服务器已完成环境安装和第一条测试轨迹的预处理、深度、VO、公开权重推理。BEV-Patch-PF 重新训练尚未完成，现增加了统一环境下的真实 FP32 训练步、网络验证和保存/重载检查，尚未完成正式 train/val 训练。** 以下训练命令用于下一步执行，不是已训练成功的实验记录。
 
 ## 0. 先确定你走哪条路线
 
@@ -35,60 +35,41 @@ cd auto_drive
 
 ## 1. 安装主环境
 
-### 1.1 本机已有环境
+### 1.1 本机已有统一环境
 
-本机已绑定环境，不需要重复安装：
+本机已经安装并验证，不用重新绑定或安装：
 
 ```bash
-conda activate ./.envs/pf
+conda activate ./.env-unified
 python -c 'import torch, manifpy; print(torch.__version__, torch.cuda.is_available())'
 ```
 
-如果直接导入 manifpy 报 `CXXABI`，先使环境内 libstdc++ 优先：
+若直接导入 manifpy 报 CXXABI，先设置：
 
 ```bash
 export LD_LIBRARY_PATH="$CONDA_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 ```
 
-统一入口会为自己的子进程设置该路径；直接执行官方 `src/train.py` 时需要自己设置。
+统一入口会自动为子进程设置库路径。
 
 ### 1.2 新机器安装
 
-先检查 NVIDIA 驱动；仅构建 cuVSLAM 时额外需要系统 CUDA Toolkit 和 `nvcc`：
+完整安装细节及 cuVSLAM 编译见 [统一环境参考标准](UNIFIED_ENV.md)。主步骤是：
 
 ```bash
 nvidia-smi
-```
-
-主项目原安装要求是 Python 3.12、conda-forge manifpy 和 `pip install -e .`。下面固定到本机已验证的 PyTorch CUDA 12.4 组合；新机器的驱动必须兼容该 CUDA runtime：
-
-```bash
-conda create -n bev-patch-pf python=3.12 pip -y
-conda activate bev-patch-pf
-conda install -c conda-forge manifpy numpy=1.26.4 -y
-python -m pip install torch==2.6.0 torchvision==0.21.0 \
+conda env create -p ./.env-unified -f requirements/unified-conda.yaml
+.env-unified/bin/python -m pip install torch==2.6.0 torchvision==0.21.0 \
   --index-url https://download.pytorch.org/whl/cu124
-python -m pip install -e .
-python -m pip install boto3 rosbags
-python -m pip install --no-deps --no-build-isolation -e third_party/rosbagkit
-export LD_LIBRARY_PATH="$CONDA_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-python -m pip check
-python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+.env-unified/bin/python -m pip install -r requirements/unified.txt
+.env-unified/bin/python -m pip install -r requirements/unified-build.txt
+.env-unified/bin/python -m pip install --no-deps \
+  -e . -e third_party/rosbagkit -e third_party/robot-eye
 ```
 
-`pyproject.toml` 的部分依赖未固定版本，所以以上不是所有操作系统的完整锁文件。安装后检查项目需要的 DINOv3 ConvNeXt 模型名称是否被 timm 识别：
+然后按 UNIFIED_ENV.md 构建 cuVSLAM Python 3.12 绑定，激活 .env-unified。不能直接使用旧 Python 3.10 绑定，也不需要安装一个独立 BEVLoc 环境。
 
-```bash
-python - <<'PY'
-import torch, timm, cv2, rasterio, hydra, rosbagkit
-from manifpy import SE2
-assert torch.cuda.is_available(), 'CUDA PyTorch 不可用'
-assert 'convnext_tiny.dinov3_lvd1689m' in timm.list_models('convnext_tiny*', pretrained=True)
-print('主环境检查通过；rosbagkit:', rosbagkit.__file__)
-PY
-```
-
-网络无法访问时，需通过可联网机器准备对应 Python/系统平台的安装包与模型缓存；不要把网络报错当成算法环境错误。
+网络不可用时，先在可联网机器准备对应平台的依赖包及模型缓存；环境完整性以真实运行验证，不仅以 pip check 判断。
 
 ## 2. 配置路径、地图和权重
 
@@ -98,10 +79,10 @@ PY
 
 ```yaml
 environments:
-  pf: .envs/pf/bin/python
-  cuvslam: .envs/cuvslam/bin/python
-  bevloc: .envs/bevloc/bin/python
-  bevloc_native_prefix: .envs/bevloc-native
+  pf: .env-unified/bin/python
+  cuvslam: .env-unified/bin/python
+  bevloc: .env-unified/bin/python
+  bevloc_native_prefix: .env-unified
 paths:
   raw_root: data/raw
   extracted_root: data/extracted
@@ -111,11 +92,10 @@ paths:
   output_root: output/local
 ```
 
-这是关键字段摘要，完整字段以模板为准。每台机器只需绑定安装好的环境：
+这是关键字段摘要，完整字段以模板为准。安装后激活统一环境，无需环境绑定：
 
 ```bash
-conda activate bev-patch-pf
-python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
+conda activate ./.env-unified
 ```
 
 需要改变数据版本或其他参数时，才复制模板为可选本机覆盖：
@@ -302,30 +282,7 @@ python scripts/local/run.py cuvslam --scene "$TEST_SCENE"
 
 短段写 `pycuvslam_probe.csv`，完整运行写 `pycuvslam.csv`；逐帧状态记录在对应 JSON 中。完整结果作为 PF 的运动输入。检查 tracked_frames 与 frames，不要只检查 CSV 存在。
 
-新机器可安装与 Python、系统、CUDA 匹配的官方 wheel；本服务器 CUDA 12.4 使用固定提交的 v17 源码构建。以下给出该构建方式的命令，**无需在本机重复执行**：
-
-```bash
-# 需要可用的 Python 3.10、编译器、git-lfs 和系统 CUDA Toolkit 12.4。
-# 没有 python3.10 时先用 conda 创建 Python 3.10 环境，再用它创建 venv。
-python3.10 -m venv .venv-cuvslam
-.venv-cuvslam/bin/python -m pip install numpy==1.26.4 opencv-python-headless pyyaml \
-  cmake==3.31.10 ninja scikit-build-core pybind11
-
-git clone https://github.com/nvidia-isaac/cuVSLAM.git /tmp/bev-cuvslam-src
-git -C /tmp/bev-cuvslam-src checkout 94be2b8baf18345fb078aec5af29e845bd61a4a6
-git -C /tmp/bev-cuvslam-src lfs pull
-.venv-cuvslam/bin/cmake -S /tmp/bev-cuvslam-src -B /tmp/bev-cuvslam-build \
-  -G Ninja -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_MAKE_PROGRAM="$PWD/.venv-cuvslam/bin/ninja" \
-  -DCUDAToolkit_ROOT=/usr/local/cuda-12.4 \
-  -DCMAKE_CUDA_ARCHITECTURES=86 -DUSE_CUNLS=OFF
-.venv-cuvslam/bin/cmake --build /tmp/bev-cuvslam-build --parallel 4
-CUVSLAM_BUILD_DIR=/tmp/bev-cuvslam-build \
-  .venv-cuvslam/bin/python -m pip install /tmp/bev-cuvslam-src/python
-.venv-cuvslam/bin/python -c 'import cuvslam; print(cuvslam.Camera())'
-```
-
-SM86 对应本机 RTX3090；其他 GPU 应修改架构，CUDA 路径也应与机器一致。安装后执行 `python scripts/local/link_envs.py --cuvslam .venv-cuvslam`，共享配置不需要修改。这里只使用双目 Odometry 模式，关闭 cuNLS；不要将它当成所有模式通用配置。官方支持先构建库、再用 CUVSLAM_BUILD_DIR 安装 Python 绑定，参见 [固定提交 README](https://github.com/nvidia-isaac/cuVSLAM/blob/94be2b8baf18345fb078aec5af29e845bd61a4a6/README.md)。
+新机器的 CUDA/绑定安装统一按 [UNIFIED_ENV.md](UNIFIED_ENV.md) 执行；本机现已使用 Python 3.12 绑定，不再要求单独的 Python 3.10 环境。
 
 ## 6. BEV-Patch-PF 训练与网络验证
 
@@ -334,7 +291,7 @@ SM86 对应本机 RTX3090；其他 GPU 应修改架构，CUDA 路径也应与机
 - 官方单 GPU 训练：`src/train.py`。
 - 官方多 GPU 训练：`src/train_ddp.py`，使用 accelerate。
 - 官方网络/损失：`src/model/`；没有为本项目替换训练算法。
-- 本地 `config/train_tartandrive.yaml` 仅保留 TartanDrive 这个数据集，沿用官方模型、损失、优化器和训练参数。
+- 本地 `config/train_tartandrive.yaml` 仅保留 TartanDrive 这个数据集，沿用官方模型、损失和优化器。共享环境配置通过官方 amp=False 选项使用 FP32；旧/新环境均发现 FP16 数值不稳定，详情见统一环境文档。
 - `scripts/local/run.py train` 给官方入口传入本机数据/地图路径，并关闭 Wandb；不重写训练循环。
 
 先看实际将执行的命令：
@@ -508,14 +465,14 @@ python scripts/local/run.py bevloc --scene "$TEST_SCENE" --limit 2
 python scripts/local/run.py bevloc --scene "$TEST_SCENE"
 ```
 
-cuVSLAM 环境安装见第 5 节；Super Odometry 使用提取后的 lidar_odom，不安装或运行 SuperOdom 仓库。BEVLoc 需额外 GDAL/GTSAM/Open3D 等独立环境、公开权重、0.3 m/px 地图 TIFF/VRT，版本/环境边界见 [LOCAL_SETUP.md](LOCAL_SETUP.md)，运行与参考辅助见 [BASELINES.md](BASELINES.md)。
+cuVSLAM 环境安装见第 5 节；Super Odometry 使用提取后的 lidar_odom，不安装或运行 SuperOdom 仓库。BEVLoc 使用同一统一环境中的 GDAL/GTSAM/Open3D，还需公开权重及 0.3 m/px 地图 TIFF/VRT，版本说明见 [LOCAL_SETUP.md](LOCAL_SETUP.md)，运行与参考辅助见 [BASELINES.md](BASELINES.md)。
 
-本机这些环境和输入已准备。新机器不能只安装 PF 环境就直接运行 BEVLoc；当前完整文档主线是 PF 环境→数据→训练→定位验证，不将 BEVLoc 的独立安装步骤假定为已经完成。
+本机统一环境和输入已准备。新机器完整安装统一环境后，不需要切换环境即可运行上述方法；各方法所需数据和权重仍要分别准备。
 
 ## 10. 组员同步清单
 
 - 代码：团队 Git 仓库，首次 git clone，后续在对应分支拉取更新。
-- 环境：各自绑定 .envs；共享模板默认可用，只有需要本机覆盖时才创建 project.yaml。
+- 环境：统一安装 .env-unified；共享模板默认可用，只有需要本机覆盖时才创建 project.yaml。
 - 数据：选定场景的完整处理目录；需要重新提取或 BEVLoc IMU 时保留对应 bag。
 - 地图和权重：另行传输，不进入 Git 版本管理。
 - 实验记录：train 输出的 config.yaml、checkpoint、val metrics，以及 PF 输出的 config.yaml、轨迹、位置 metrics 和图。
@@ -526,6 +483,6 @@ Git 远端建立、提交和组员 clone 的操作见 [README 的 Git 管理与�
 
 已验证：当前测试轨迹的数据准备产物、SGBM 深度、cuVSLAM 运行、公开权重 PF 完整运行、四方法已有推理入口；整理后短段预测及资源迁移检查。
 
-尚未完成：BEV-Patch-PF 用新 train/val 数据真正完成一次训练，也未完成全数据集或 DDP 训练。本文最小训练命令已核对 Hydra 配置解析；新机器环境安装/源码编译仍需在其实际硬件上执行验证。
+尚未完成：BEV-Patch-PF 用新 train/val 数据真正完成一次训练，也未完成全数据集或 DDP 训练。本文最小训练命令已核对 Hydra 配置解析，统一环境另完成了测试样本上的 FP32 训练步和网络验证。新机器仍需验证实际硬件；尚未完成正式 train/val 训练。
 
 建议下一步只准备上述一条 train 和一条 val，完成第 6.2 节，然后用该 checkpoint 执行第 7.3 节。每阶段先验收再扩大，不需要一次下载并训练所有路线。
