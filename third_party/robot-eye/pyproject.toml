@@ -1,0 +1,28 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "roboteye"
+version = "0.0.1"
+description = "A python package centered around a ego-centric robot and using computer vision and multi-view geometry to allow for intuitive processing of the world through different camera in different coordinate frames"
+authors = ["Chris Klammer <cklammer@andrew.cmu.edu>"]
+
+[tool.poetry.dependencies]
+python = "^3.8, <4.0"
+pyquaternion = "^0.9.9"
+scipy = "^1.0"
+pytest = "*"
+
+# [tool.poetry.dev-dependencies]
+
+# [tool.poetry.scripts]
+
+# [tool.poetry.plugins]
+
+# [tool.poetry.extras]
+
+# [tool.poetry.flit]
+
+# [tool.poetry.pipenv]
+scikit-learn = "^1.3.1"

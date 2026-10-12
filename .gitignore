@@ -189,8 +189,8 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 
-data/
-data_raw/
+/data/
+/data_raw/
 figure/
 output/
 output
@@ -210,3 +210,10 @@ paper_scripts/pf_results/
 
 wandb/
 test/
+# Local integration: machine paths, model weights and runtime environments
+config/local/project.yaml
+weights/
+.env*/
+.venv*/
+*.ckpt
+*.pth

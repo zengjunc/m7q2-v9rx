@@ -1,0 +1,32 @@
+bagfile_root: /path/to/bagfiles
+output_root: /path/to/output/bluebonnet
+
+topics:
+  /bluebonnet/sensors/camera/bluebonnet_realsense/color/image_raw:
+    format: image
+    outdir: image_raw
+  /bluebonnet/sensors/camera/bluebonnet_realsense/depth/image_rect_raw:
+    format: depth
+    outdir: depth
+  /bluebonnet/sensors/camera/bluebonnet_realsense/color/image_raw/compressed:
+    format: image
+    outdir: image_raw
+  /bluebonnet/platform/odom:
+    format: csv
+    outpath: odom_platform.csv
+  /bluebonnet/sensors/ublox/fix:
+    format: csv
+    outpath: gps.csv
+
+scenes:
+  example_run_00:
+    bagfiles:
+      - date_or_split/example_run_00
+    start: 0
+    end: -1
+
+  example_run_01:
+    bagfiles:
+      - date_or_split/example_run_01
+    start: 0
+    end: -1

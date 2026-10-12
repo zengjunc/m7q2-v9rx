@@ -1,0 +1,17 @@
+{
+  "python": "3.12.15 (main, Oct  6 2026, 23:50:18) [GCC 15.3.0]",
+  "virtual_environment_isolated": true,
+  "versions": {
+    "gdal": "3.13.3",
+    "torch": "2.6.0+cu124",
+    "torchvision": "0.21.0+cu124",
+    "numpy": "1.26.4",
+    "open3d-cpu": "0.19.0",
+    "gtsam": "4.2.1",
+    "pytorch-lightning": "2.5.6",
+    "pytorch-metric-learning": "2.3.0",
+    "transformers": "4.38.2",
+    "roboteye": "0.0.1",
+    "pypose": "0.6.8"
+  }
+}

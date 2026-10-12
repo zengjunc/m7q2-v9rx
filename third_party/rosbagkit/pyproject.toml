@@ -1,0 +1,42 @@
+[project]
+name = "rosbagkit"
+version = "0.1.0"
+description = "Toolkit for processing ROS bagfiles"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Dongmyeong Lee"}]
+dependencies = [
+    "rosbags",
+    "opencv-python",
+    "numpy",
+    "pandas",
+    "pyyaml",
+    "scipy",
+    "tqdm",
+]
+
+[project.urls]
+Homepage = "https://github.com/ut-amrl/rosbagkit"
+Repository = "https://github.com/ut-amrl/rosbagkit"
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

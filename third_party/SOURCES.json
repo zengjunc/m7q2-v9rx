@@ -1,0 +1,32 @@
+{
+  "bev-patch-pf": {
+    "source": "https://github.com/ut-amrl/bev-patch-pf",
+    "commit": "9fe6cf4ad6710f543d2918a87a1ac527ffa508ca"
+  },
+  "bevloc": {
+    "source": "local bevloc-main working snapshot",
+    "snapshot_date": "2026-10-09",
+    "commit": null,
+    "modified": true
+  },
+  "tartandrive": {
+    "source": "https://github.com/castacks/tartan_drive_2.0",
+    "contents": "official manifest, calibration, README, license; no downloaded map"
+  },
+  "rosbagkit": {
+    "source": "https://github.com/ut-amrl/rosbagkit",
+    "commit": "ec359520caed3b00a3ec82b6066fa666a8cfab1d"
+  },
+  "robot-eye": {
+    "source": "https://github.com/klammecr/robot-eye",
+    "commit": "04c2f8c42ee18dfc0f5c311098f96d2727865d09"
+  },
+  "cuvslam": {
+    "source": "https://github.com/nvidia-isaac/cuVSLAM",
+    "commit": "94be2b8baf18345fb078aec5af29e845bd61a4a6",
+    "distribution": "external installed CUDA/Python binding"
+  },
+  "superodom": {
+    "distribution": "dataset precomputed lidar_odom.csv; source execution not needed"
+  }
+}

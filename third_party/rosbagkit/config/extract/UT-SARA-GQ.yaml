@@ -1,0 +1,200 @@
+bagfile_root: UT-SARA-GQ/rosbags_public
+output_root: UT-SARA-GQ/processed
+
+topics:
+  /trevor/odom:
+    format: csv
+    outpath: odom.csv
+  /trevor/gps:
+    format: csv
+    outpath: gps.csv
+  /trevor/stereo_left/image_rect_color/compressed:
+    format: image
+    outdir: 2d_raw/cam_left
+  /trevor/stereo_right/image_rect_color/compressed:
+    format: image
+    outdir: 2d_raw/cam_right
+
+rectification:
+  enabled: true
+  left_topic: /trevor/stereo_left/image_rect_color/compressed
+  right_topic: /trevor/stereo_right/image_rect_color/compressed
+  left_calib: UT-SARA-GQ/calibration/cam_left_intrinsics.yaml
+  right_calib: UT-SARA-GQ/calibration/cam_right_intrinsics.yaml
+  extrinsics: UT-SARA-GQ/calibration/cam_left_to_right.yaml
+  threshold: 0.1
+  output_dir: 2d_rect
+  left_subdir: cam_left
+  right_subdir: cam_right
+  timestamp_file: timestamps.txt
+  left_prefix: 2d_rect_left_
+  right_prefix: 2d_rect_right_
+
+scenes:
+  2024-08-12-11-32-46:
+    bagfiles:
+      - 2024-08-12-11-32-46
+
+  2024-08-12-11-45-44:
+    bagfiles:
+      - 2024-08-12-11-45-44
+
+  2024-08-12-12-00-13:
+    bagfiles:
+      - 2024-08-12-12-00-13
+
+  2024-08-12-12-16-01:
+    bagfiles:
+      - 2024-08-12-12-16-01
+
+  2024-08-12-12-29-20:
+    bagfiles:
+      - 2024-08-12-12-29-20
+
+  2024-08-12-12-39-26:
+    bagfiles:
+      - 2024-08-12-12-39-26
+
+  2024-08-12-17-18-39:
+    bagfiles:
+      - 2024-08-12-17-18-39
+
+  2024-08-12-17-28-12:
+    bagfiles:
+      - 2024-08-12-17-28-12
+
+  2024-08-12-17-41-07:
+    bagfiles:
+      - 2024-08-12-17-41-07
+
+  2024-08-13-11-25-22:
+    bagfiles:
+      - 2024-08-13-11-25-22
+
+  2024-08-13-11-28-57:
+    bagfiles:
+      - 2024-08-13-11-28-57
+
+  2024-08-13-11-34-23:
+    bagfiles:
+      - 2024-08-13-11-34-23
+
+  2024-08-13-11-37-53:
+    bagfiles:
+      - 2024-08-13-11-37-53
+
+  2024-08-13-11-48-00:
+    bagfiles:
+      - 2024-08-13-11-48-00
+
+  2024-08-13-11-59-52:
+    bagfiles:
+      - 2024-08-13-11-59-52
+
+  2024-08-13-12-05-41:
+    bagfiles:
+      - 2024-08-13-12-05-41
+
+  2024-08-13-12-13-51:
+    bagfiles:
+      - 2024-08-13-12-13-51
+
+  2024-08-13-15-28-36:
+    bagfiles:
+      - 2024-08-13-15-28-36
+
+  2024-08-13-15-39-15:
+    bagfiles:
+      - 2024-08-13-15-39-15
+
+  2024-08-13-16-20-38:
+    bagfiles:
+      - 2024-08-13-16-20-38
+
+  2024-08-13-16-27-54:
+    bagfiles:
+      - 2024-08-13-16-27-54
+
+  2024-08-13-16-36-24:
+    bagfiles:
+      - 2024-08-13-16-36-24
+
+  2024-08-13-16-41-44:
+    bagfiles:
+      - 2024-08-13-16-41-44
+
+  2024-08-13-16-45-06:
+    bagfiles:
+      - 2024-08-13-16-45-06
+
+  2024-08-13-16-48-47:
+    bagfiles:
+      - 2024-08-13-16-48-47
+
+  2024-08-13-16-54-12:
+    bagfiles:
+      - 2024-08-13-16-54-12
+
+  2024-08-13-16-56-52:
+    bagfiles:
+      - 2024-08-13-16-56-52
+
+  2024-08-13-17-07-31:
+    bagfiles:
+      - 2024-08-13-17-07-31
+
+  2024-08-13-17-14-03:
+    bagfiles:
+      - 2024-08-13-17-14-03
+
+  2024-08-15-12-40-46:
+    bagfiles:
+      - 2024-08-15-12-40-46
+
+  2024-08-15-12-44-16:
+    bagfiles:
+      - 2024-08-15-12-44-16
+
+  2024-08-15-12-53-53:
+    bagfiles:
+      - 2024-08-15-12-53-53
+
+  2024-08-15-12-56-35:
+    bagfiles:
+      - 2024-08-15-12-56-35
+
+  2024-08-15-13-08-57:
+    bagfiles:
+      - 2024-08-15-13-08-57
+
+  2024-08-15-13-23-03:
+    bagfiles:
+      - 2024-08-15-13-23-03
+
+  2024-08-15-13-27-41:
+    bagfiles:
+      - 2024-08-15-13-27-41
+
+  2024-08-15-13-33-25:
+    bagfiles:
+      - 2024-08-15-13-33-25
+
+  2024-08-15-13-37-11:
+    bagfiles:
+      - 2024-08-15-13-37-11
+
+  2024-08-15-13-43-35:
+    bagfiles:
+      - 2024-08-15-13-43-35
+
+  2024-08-15-13-48-29:
+    bagfiles:
+      - 2024-08-15-13-48-29
+
+  2024-08-15-13-52-10:
+    bagfiles:
+      - 2024-08-15-13-52-10
+
+  2024-08-15-13-59-13:
+    bagfiles:
+      - 2024-08-15-13-59-13

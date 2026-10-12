@@ -1,128 +1,122 @@
-<div align="center">
+# BEV-Patch-PF 实验代码库
 
-# BEV-Patch-PF
+基于 [ut-amrl/bev-patch-pf](https://github.com/ut-amrl/bev-patch-pf)，以 BEV-Patch-PF 为主方法，接入 BEVLoc、cuVSLAM 和数据集预计算的 Super Odometry。当前使用公开预训练权重。
 
-**Particle Filtering with BEV-Aerial Feature Matching for Off-Road Geo-Localization**
+**`src/`、官方配置和 `preprocessing/` 保持上游算法；我们的入口在 `scripts/local/`，配置在 `config/local/`。** 原 README 保留于 [docs/UPSTREAM_README.md](docs/UPSTREAM_README.md)。
 
-[Project Page](https://amrl.cs.utexas.edu/bev-patch-pf) • [Paper (arXiv)](https://arxiv.org/abs/2512.15111) • [Data](https://dataverse.tdl.org/dataset.xhtml?persistentId=doi:10.18738/T8/LGV3UO) • [ROS 2 Deployment](https://github.com/ut-amrl/bev-patch-pf_ROS2)
+```text
+src/                    官方训练、网络、粒子滤波、数据加载
+config/                 官方配置 + train_tartandrive.yaml（本地单数据集配置）
+preprocessing/          官方预处理
+scripts/local/          我们的数据工具、运行适配、评估、同步打包
+third_party/            BEVLoc、robot-eye、rosbagkit 及 TartanDrive 资源
+config/local/           配置模板；project.yaml 是本机配置，不进入版本控制
+weights/                公开预训练权重，不进入版本控制
+data/                   BEVLoc 输入与地图，不进入版本控制
+output/                 当前结果与 archive/ 历史结果，不进入版本控制
+```
 
-</div>
+## 完整流程
 
-<p align="center">
-  <img src="asset/pipeline.jpg" alt="BEV-Patch-PF pipeline overview" width="900">
-</p>
+从安装、数据下载/处理，到 BEV-Patch-PF 训练、网络验证和测试轨迹评估，请先阅读 [全流程操作手册](docs/END_TO_END.md)。本 README 仅保留常用入口。
 
-BEV-Patch-PF is a GPS-free geo-localization system for long-horizon offroad localization.
-It combines learned bird's-eye-view (BEV) features, aerial map features, and particle filtering to estimate robot pose over time.
+## 配置与运行
 
-
-## Installation
+先使用 BEV-Patch-PF 环境：
 
 ```bash
-conda create -y -n bev-patch-pf python=3.12
-conda activate bev-patch-pf
-conda install -y -c conda-forge manifpy
-pip install -e .
+conda activate /mnt/data/conda_envs/bev-patch-pf
+cd /home/zengjunchao/code/auto_drive/bev-patch-pf
 ```
 
-For multi-GPU training with `accelerate`:
+本机 `config/local/project.yaml` 已配置好，复用既有数据、地图和权重。组员复制模板并填写自己的路径：
 
 ```bash
-pip install accelerate
+cp config/local/project.example.yaml config/local/project.yaml
 ```
 
-## Quick Start
+所有相对路径以本仓库根目录为基准；不需要修改脚本源码。
 
-The demo downloads a pinned checkpoint and a pinned sparse demo dataset from Hugging Face, then launches Rerun with the demo blueprint.
+当前测试轨迹是 `2023-11-02-16-00-43_down_meadows`（TD08），默认使用 2290 帧版本。已有深度和 cuVSLAM 文件，可以直接运行 PF：
 
 ```bash
-python src/run_demo.py
+python scripts/local/run.py pf
+python scripts/local/run.py bevloc
+python scripts/local/run.py cuvslam
+python scripts/local/run.py superodom
 ```
 
-The demo configuration is defined in [`config/demo.yaml`](config/demo.yaml).
+`cuvslam` 完整运行会替换场景中的 `pycuvslam.csv`；它也是 PF 的运动输入。Super Odometry 使用预计算轨迹，不重新启动 LiDAR/IMU 算法。
 
-
-## Training
-
-Single-GPU training:
+短段检查和指定轨迹：
 
 ```bash
-python src/train.py
+python scripts/local/run.py pf --limit 10
+python scripts/local/run.py bevloc --limit 2       # 2 个 batch，每批最多 8 帧
+python scripts/local/run.py cuvslam --limit 10    # 写 probe 文件，保留完整 VO 文件
+python scripts/local/run.py pf --scene SCENE_NAME --output output/my_run
+python scripts/local/run.py pf --checkpoint /path/to/trained.pth --output output/trained_test
 ```
 
-Multi-GPU training:
+结果默认写到 `output/local/<scene>/<method>/`，含轨迹、`metrics.json` 和轨迹图。同名目录再次运行会覆盖对应结果。`--dry-run` 只打印命令，不启动任务。
+
+## 数据准备
+
+仅对尚未准备的轨迹依次执行：
 
 ```bash
-accelerate launch --multi_gpu --num_processes=<num_gpus> --mixed_precision=fp16 src/train_ddp.py
+python scripts/local/run.py download --scene SCENE_NAME
+python scripts/local/run.py extract --scene SCENE_NAME
+python scripts/local/run.py preprocess --scene SCENE_NAME
+python scripts/local/run.py depth --scene SCENE_NAME
+python scripts/local/run.py cuvslam --scene SCENE_NAME
+python scripts/local/run.py prepare-bevloc --scene SCENE_NAME
 ```
 
-The default training setup is defined in [`config/train.yaml`](config/train.yaml). Training outputs are written under `output/train/...`.
+下载为单轨迹 rosbags；提取使用 header 时间；预处理调用官方脚本；深度使用 StereoSGBM，uint16 毫米，0 为无效。地图及权重需另行准备，不由以上命令下载。
 
+## 官方训练与推理
 
-## Particle Filter Evaluation
-
-Run offline particle filtering with a local checkpoint:
+官方入口继续可用：`python src/train.py`、`accelerate launch src/train_ddp.py`、`python src/run_pf.py`。训练默认配置包含多个数据集；本地 TartanDrive-only 配置仅改变数据集选择，训练步骤和损失保持官方实现：
 
 ```bash
-python src/run_pf.py sequence=tartandrive ckpt_path=/path/to/model.pth
+python scripts/local/run.py train --dry-run
+python scripts/local/run.py train epochs=5 batch_size=4
 ```
 
-`run_pf.py` uses Hydra overrides from [`config/run_pf.yaml`](config/run_pf.yaml) together with sequence configs under [`config/sequence`](config/sequence).
+训练前需准备官方配置指定的 train/val 场景。当前公开权重预测不需要训练，**本次整理只验证训练入口配置解析，未重新训练主方法**。
 
+## Git 管理与组员同步
 
-## Real-Time Deployment
-
-After exporting ONNX, build TensorRT engines and run the ROS 2 deployment stack from the companion repository:
-[ut-amrl/bev-patch-pf_ROS2](https://github.com/ut-amrl/bev-patch-pf_ROS2)
-
-### Export ONNX
-
-Export the model for deployment:
+团队仓库：[zengjunc/auto_drive](https://github.com/zengjunc/auto_drive)。本目录保留 BEV-Patch-PF 上游历史，无需重新 git init。下面是首次从官方库建立团队远端的配置步骤；已配置的机器不要重复执行：
 
 ```bash
-python scripts/export_onnx.py --ckpt_path=/path/to/model.pth --out_dir=/path/to/export_dir
+# 当前 origin 指向官方仓库，先将其保留为 upstream；仅执行一次。
+git remote rename origin upstream
+git remote add origin https://github.com/zengjunc/auto_drive.git
+git remote -v
+
+# 检查、提交并推送项目代码。
+git status --short
+git add README.md .gitignore config docs scripts/local third_party paper_scripts/config/experiment/tartandrive.yaml
+git diff --cached --stat
+git commit -m "Integrate TartanDrive workflow and localization baselines"
+git push -u origin HEAD
 ```
 
-## Dataset Preparation
-
-### From ROS Bagfiles
-
-A typical pipeline is:
-
-1. Extract sensor streams such as RGB, depth, and IMU using [`rosbagkit`](https://github.com/ut-amrl/rosbagkit).
-2. Generate a trajectory estimate with a SLAM or odometry pipeline (e.g., FAST-LIO, Adaptive-LIO).
-3. Export a GeoTIFF map in the correct UTM zone (e.g., QGIS).
-4. Align the trajectory into the GeoTIFF frame:
+组员首次获取：
 
 ```bash
-python preprocessing/align_trajectory_geotiff.py --geotiff=/path/to/map.tiff --traj=/path/to/trajectory.csv
+git clone https://github.com/zengjunc/auto_drive.git bev-patch-pf
+cd bev-patch-pf
+cp config/local/project.example.yaml config/local/project.yaml
 ```
 
-5. Run dataset-specific preprocessing as needed, for example:
+日常在自己的开发分支提交，再合并至团队主分支；更新代码使用 `git pull --ff-only`。上游更新通过 upstream 获取并审阅，不直接覆盖本地适配。
 
-```bash
-python preprocessing/preprocess_arl_jackal.py
-```
+Git 管理源码、配置模板、必要第三方源码和文档；本机 project.yaml、数据、地图、权重、环境与运行结果由 .gitignore 排除，组员单独准备并配置路径。团队远端为 origin，官方远端为 upstream。
 
-### From TartanDrive 2.0
-
-1. Download the raw bagfiles from https://github.com/castacks/tartan_drive_2.0.
-2. Extract images and odometry with [`rosbagkit`](https://github.com/ut-amrl/rosbagkit).
-3. Run preprocessing:
-
-```bash
-python preprocessing/preprocess_tartandrive.py
-```
-
-## Citation
-
-```bibtex
-@misc{lee2025bevpatchpf,
-  title         = {BEV-Patch-PF: Particle Filtering with BEV-Aerial Feature Matching for Off-Road Geo-Localization},
-  author        = {Lee, Dongmyeong and Quattrociocchi, Jesse and Ellis, Christian and Rana, Rwik and Adkins, Amanda and Uccello, Adam and Warnell, Garrett and Biswas, Joydeep},
-  year          = {2025},
-  eprint        = {2512.15111},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.RO}
-}
-```
+- [环境与数据格式](docs/LOCAL_SETUP.md)
+- [Baseline 运行与评估约定](docs/BASELINES.md)
+- [官方/本地修改清单](docs/LOCAL_CHANGES.md)
+- [代码阅读指南](docs/CODE_GUIDE.md)

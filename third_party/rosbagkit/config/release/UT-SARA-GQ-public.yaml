@@ -1,0 +1,276 @@
+input_root: /robodata/ARL_SARA/GQ-dataset/bagfiles
+output_root: UT-SARA-GQ/rosbags_public
+
+topics_keep:
+  - /tf_static
+  - /tf
+  - /trevor/imu
+  - /trevor/gps
+  - /trevor/odom
+  - /trevor/lidar_points
+  - /trevor/stereo_left
+  - /trevor/stereo_right
+  - /trevor/warthog_velocity_controller
+  - /trevor/left_drive
+  - /trevor/right_drive
+  - /trevor/joint_states
+
+topics_exclude:
+  - /trevor/lidar_points_center
+  - /trevor/imu/filter/status
+  - /trevor/imu/pps_status
+  - /trevor/multisense_forward
+  - /trevor/multisense_rear
+
+scenes:
+  2024-08-12-11-32-46:
+    bagfiles:
+      - 2024-08-12-11-32-46.bag
+    start: 1723476810.3
+    end: 1723477453.1
+
+  2024-08-12-11-45-44:
+    bagfiles:
+      - 2024-08-12-11-45-44.bag
+    start: 1723477570.6
+    end: 1723478133.7
+
+  2024-08-12-12-00-13:
+    bagfiles:
+      - 2024-08-12-12-00-13.bag
+    start: 1723478481.0
+    end: 1723479121.0
+
+  2024-08-12-12-16-01:
+    bagfiles:
+      - 2024-08-12-12-16-01.bag
+    start: 0
+    end: 1723479852.2
+
+  2024-08-12-12-29-20:
+    bagfiles:
+      - 2024-08-12-12-29-20.bag
+    start: 0
+    end: -1
+
+  2024-08-12-12-39-26:
+    bagfiles:
+      - 2024-08-12-12-39-26.bag
+    start: 0
+    end: -1
+
+  2024-08-12-17-18-39:
+    bagfiles:
+      - 2024-08-12-17-18-39.bag
+    start: 0
+    end: -1
+
+  2024-08-12-17-28-12:
+    bagfiles:
+      - 2024-08-12-17-28-12.bag
+    start: 0
+    end: 1723498823.3
+
+  2024-08-12-17-41-07:
+    bagfiles:
+      - 2024-08-12-17-41-07.bag
+    start: 1723498890.0
+    end: 1723499088.6
+
+  2024-08-13-11-25-22:
+    bagfiles:
+      - 2024-08-13-11-25-22.bag
+    start: 1723562775.5
+    end: 1723562827.6
+
+  2024-08-13-11-28-57:
+    bagfiles:
+      - 2024-08-13-11-28-57.bag
+    start: 0
+    end: -1
+
+  2024-08-13-11-34-23:
+    bagfiles:
+      - 2024-08-13-11-34-23.bag
+    start: 0
+    end: 1723563360.4
+
+  2024-08-13-11-37-53:
+    bagfiles:
+      - 2024-08-13-11-37-53.bag
+    start: 0
+    end: -1
+
+  2024-08-13-11-48-00:
+    bagfiles:
+      - 2024-08-13-11-48-00.bag
+    start: 0
+    end: -1
+
+  2024-08-13-11-59-52:
+    bagfiles:
+      - 2024-08-13-11-59-52.bag
+    start: 0
+    end: -1
+
+  2024-08-13-12-05-41:
+    bagfiles:
+      - 2024-08-13-12-05-41.bag
+    start: 0
+    end: -1
+
+  2024-08-13-12-13-51:
+    bagfiles:
+      - 2024-08-13-12-13-51.bag
+    start: 0
+    end: -1
+
+  2024-08-13-15-28-36:
+    bagfiles:
+      - 2024-08-13-15-28-36.bag
+    start: 0
+    end: -1
+
+  2024-08-13-15-39-15:
+    bagfiles:
+      - 2024-08-13-15-39-15.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-20-38:
+    bagfiles:
+      - 2024-08-13-16-20-38.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-27-54:
+    bagfiles:
+      - 2024-08-13-16-27-54.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-36-24:
+    bagfiles:
+      - 2024-08-13-16-36-24.bag
+    start: 0
+    end: 1723581625.0
+
+  2024-08-13-16-41-44:
+    bagfiles:
+      - 2024-08-13-16-41-44.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-45-06:
+    bagfiles:
+      - 2024-08-13-16-45-06.bag
+    start: 0
+    end: 1723581982.2
+
+  2024-08-13-16-48-47:
+    bagfiles:
+      - 2024-08-13-16-48-47.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-54-12:
+    bagfiles:
+      - 2024-08-13-16-54-12.bag
+    start: 0
+    end: -1
+
+  2024-08-13-16-56-52:
+    bagfiles:
+      - 2024-08-13-16-56-52.bag
+    start: 0
+    end: -1
+
+  2024-08-13-17-07-31:
+    bagfiles:
+      - 2024-08-13-17-07-31.bag
+    start: 0
+    end: -1
+
+  2024-08-13-17-14-03:
+    bagfiles:
+      - 2024-08-13-17-14-03.bag
+    start: 0
+    end: 1723583728.5
+
+  2024-08-15-12-40-46:
+    bagfiles:
+      - 2024-08-15-12-40-46.bag
+    start: 0
+    end: -1
+
+  2024-08-15-12-44-16:
+    bagfiles:
+      - 2024-08-15-12-44-16.bag
+    start: 0
+    end: -1
+
+  2024-08-15-12-53-53:
+    bagfiles:
+      - 2024-08-15-12-53-53.bag
+    start: 0
+    end: -1
+
+  2024-08-15-12-56-35:
+    bagfiles:
+      - 2024-08-15-12-56-35.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-08-57:
+    bagfiles:
+      - 2024-08-15-13-08-57.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-23-03:
+    bagfiles:
+      - 2024-08-15-13-23-03.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-27-41:
+    bagfiles:
+      - 2024-08-15-13-27-41.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-33-25:
+    bagfiles:
+      - 2024-08-15-13-33-25.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-37-11:
+    bagfiles:
+      - 2024-08-15-13-37-11.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-43-35:
+    bagfiles:
+      - 2024-08-15-13-43-35.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-48-29:
+    bagfiles:
+      - 2024-08-15-13-48-29.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-52-10:
+    bagfiles:
+      - 2024-08-15-13-52-10.bag
+    start: 0
+    end: -1
+
+  2024-08-15-13-59-13:
+    bagfiles:
+      - 2024-08-15-13-59-13.bag
+    start: 0
+    end: -1

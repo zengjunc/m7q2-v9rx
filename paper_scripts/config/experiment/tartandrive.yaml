@@ -4,6 +4,7 @@ dataset:
   name: TartanDrive2
   geotiff: data/TartanDrive2/gascola_EPSG32617_scale03_082725.tiff
   scenes:
+    # LOCAL MODIFICATION: use config/dataset/tartandrive.yaml scene order.
     seen:
       - 2023-11-14-14-52-22_gupta
       - figure_8_2023-09-14-12-48-02
@@ -12,6 +13,7 @@ dataset:
       - warehouse_gupta_skydio_2023-09-13-16-45-20
       - warehouse_to_fence_2023-09-12-10-19-17
     unseen:
+      - 2023-10-26-14-42-35_turnpike_afternoon_fall # (bad odom)
       - 2023-11-02-16-00-43_down_meadows
       - figure_8_to_turnpike_pt2_2023-09-12-12-28-48
       - meadow_turnpike_2023-09-14-13-35-35
@@ -20,14 +22,13 @@ dataset:
       - turnpike_2023-09-12-12-39-19
       - turnpike_2023-09-12-12-53-32
       - turnpike_2023-09-13-18-09-45
-      - turnpike_2023-09-13-18-37-40
-      - turnpike_2023-09-14-13-20-40
-      - turnpike_skydio_2023-09-13-18-00-11
-      - turnpike_flat_2023-09-12-13-11-44
-      - turnpike_2023-09-13-18-42-57
-      - turnpike_flat_2023-09-12-13-42-26
       - turnpike_2023-09-13-18-15-03 # (bad odom)
-      - 2023-10-26-14-42-35_turnpike_afternoon_fall # (bad odom)
+      - turnpike_2023-09-13-18-37-40
+      - turnpike_2023-09-13-18-42-57
+      - turnpike_2023-09-14-13-20-40
+      - turnpike_flat_2023-09-12-13-11-44
+      - turnpike_flat_2023-09-12-13-42-26
+      - turnpike_skydio_2023-09-13-18-00-11
 
 methods:
   - name: Ground Truth

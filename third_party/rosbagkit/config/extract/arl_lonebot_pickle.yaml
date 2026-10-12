@@ -1,0 +1,26 @@
+bagfile_root: /path/to/bagfiles
+output_root: /path/to/output/lonebot
+
+topics:
+  /lonebot/sensors/realsense/camera/depth/color/points:
+    format: pointcloud_depth
+    outdir: depth_pointcloud
+    width: 848
+    height: 480
+    P: [429.5533, 0.0, 431.5823, 0.0, 0.0, 429.5533, 240.2142, 0.0, 0.0, 0.0, 1.0, 0.0]
+  /lonebot/sensors/realsense/camera/depth/image_rect_raw/compressed:
+    format: depth
+    outdir: depth_compressed
+
+scenes:
+  example_pickle_autonomy_run:
+    bagfiles:
+      - pickle/example_autonomy_run
+    start: 0
+    end: -1
+
+  example_pickle_teleop_run:
+    bagfiles:
+      - pickle/example_teleop_run
+    start: 0
+    end: -1

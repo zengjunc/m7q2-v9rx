@@ -1,0 +1,532 @@
+bagfile_root: /robodata/public_datasets/TartanDrive2
+output_root: /robodata/dlee/Datasets/TartanDrive2
+timestamp_source: bag
+
+topics:
+  /lidar_odometry:
+    format: csv
+    outpath: lidar_odom.csv
+  /tartanvo_odom:
+    format: csv
+    outpath: tartanvo_odom.csv
+  /odom:
+    format: csv
+    outpath: odom.csv
+  /odometry/filtered_odom:
+    format: csv
+    outpath: filtered_odom.csv
+  /multisense/left/image_rect_color:
+    format: image
+    outdir: multisense/color
+  /multisense/left/image_rect:
+    format: image
+    outdir: multisense/left
+  /multisense/right/image_rect:
+    format: image
+    outdir: multisense/right
+
+scenes:
+  2023-10-26-14-42-35_turnpike_afternoon_fall:
+    bagfiles:
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_0.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_1.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_2.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_3.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_4.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_5.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_6.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_7.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_8.bag
+      - bags/2023-10-26-14-42-35_turnpike_afternoon_fall/turnpike_afternoon_fall_9.bag
+
+  2023-10-26-15-32-25_turnpike_warehouse_fall:
+    bagfiles:
+      - bags/2023-10-26-15-32-25_turnpike_warehouse_fall/turnpike_warehouse_fall_0.bag
+      - bags/2023-10-26-15-32-25_turnpike_warehouse_fall/turnpike_warehouse_fall_1.bag
+      - bags/2023-10-26-15-32-25_turnpike_warehouse_fall/turnpike_warehouse_fall_2.bag
+      - bags/2023-10-26-15-32-25_turnpike_warehouse_fall/turnpike_warehouse_fall_3.bag
+
+  2023-11-02-16-00-43_down_meadows:
+    bagfiles:
+      - bags/2023-11-02-16-00-43_down_meadows/down_meadows_0.bag
+      - bags/2023-11-02-16-00-43_down_meadows/down_meadows_1.bag
+      - bags/2023-11-02-16-00-43_down_meadows/down_meadows_2.bag
+
+  2023-11-14-14-24-21_gupta:
+    bagfiles:
+      - bags/2023-11-14-14-24-21_gupta/gupta_0.bag
+
+  2023-11-14-14-26-22_gupta:
+    bagfiles:
+      - bags/2023-11-14-14-26-22_gupta/gupta_0.bag
+      - bags/2023-11-14-14-26-22_gupta/gupta_1.bag
+
+  2023-11-14-14-34-53_gupta:
+    bagfiles:
+      - bags/2023-11-14-14-34-53_gupta/gupta_0.bag
+      - bags/2023-11-14-14-34-53_gupta/gupta_1.bag
+      - bags/2023-11-14-14-34-53_gupta/gupta_2.bag
+
+  2023-11-14-14-45-20_gupta:
+    bagfiles:
+      - bags/2023-11-14-14-45-20_gupta/gupta_0.bag
+      - bags/2023-11-14-14-45-20_gupta/gupta_1.bag
+
+  2023-11-14-14-52-22_gupta:
+    bagfiles:
+      - bags/2023-11-14-14-52-22_gupta/gupta_0.bag
+      - bags/2023-11-14-14-52-22_gupta/gupta_1.bag
+      - bags/2023-11-14-14-52-22_gupta/gupta_2.bag
+
+  2023-11-14-15-02-21_figure_8:
+    bagfiles:
+      - bags/2023-11-14-15-02-21_figure_8/figure_8_0.bag
+      - bags/2023-11-14-15-02-21_figure_8/figure_8_1.bag
+      - bags/2023-11-14-15-02-21_figure_8/figure_8_2.bag
+      - bags/2023-11-14-15-02-21_figure_8/figure_8_3.bag
+      - bags/2023-11-14-15-02-21_figure_8/figure_8_4.bag
+
+  2023-11-14-15-11-49_rough_rider_turnpike_loop:
+    bagfiles:
+      - bags/2023-11-14-15-11-49_rough_rider_turnpike_loop/rough_rider_turnpike_loop_0.bag
+      - bags/2023-11-14-15-11-49_rough_rider_turnpike_loop/rough_rider_turnpike_loop_1.bag
+      - bags/2023-11-14-15-11-49_rough_rider_turnpike_loop/rough_rider_turnpike_loop_2.bag
+      - bags/2023-11-14-15-11-49_rough_rider_turnpike_loop/rough_rider_turnpike_loop_3.bag
+
+  2023-11-14-15-22-01_figure_8:
+    bagfiles:
+      - bags/2023-11-14-15-22-01_figure_8/figure_8_0.bag
+      - bags/2023-11-14-15-22-01_figure_8/figure_8_1.bag
+      - bags/2023-11-14-15-22-01_figure_8/figure_8_2.bag
+
+  figure_8_2023-09-13-17-07-51:
+    bagfiles:
+      - bags/figure_8_2023-09-13-17-07-51/figure_8_0.bag
+      - bags/figure_8_2023-09-13-17-07-51/figure_8_1.bag
+      - bags/figure_8_2023-09-13-17-07-51/figure_8_2.bag
+      - bags/figure_8_2023-09-13-17-07-51/figure_8_3.bag
+      - bags/figure_8_2023-09-13-17-07-51/figure_8_4.bag
+
+  figure_8_2023-09-13-17-23-35:
+    bagfiles:
+      - bags/figure_8_2023-09-13-17-23-35/figure_8_0.bag
+
+  figure_8_2023-09-13-17-24-26:
+    bagfiles:
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_0.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_1.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_2.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_3.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_4.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_5.bag
+      - bags/figure_8_2023-09-13-17-24-26/figure_8_6.bag
+
+  figure_8_2023-09-14-11-37-49:
+    bagfiles:
+      - bags/figure_8_2023-09-14-11-37-49/figure_8_0.bag
+      - bags/figure_8_2023-09-14-11-37-49/figure_8_1.bag
+      - bags/figure_8_2023-09-14-11-37-49/figure_8_2.bag
+      - bags/figure_8_2023-09-14-11-37-49/figure_8_3.bag
+
+  figure_8_2023-09-14-12-48-02:
+    bagfiles:
+      - bags/figure_8_2023-09-14-12-48-02/figure_8_0.bag
+      - bags/figure_8_2023-09-14-12-48-02/figure_8_1.bag
+      - bags/figure_8_2023-09-14-12-48-02/figure_8_2.bag
+      - bags/figure_8_2023-09-14-12-48-02/figure_8_3.bag
+      - bags/figure_8_2023-09-14-12-48-02/figure_8_4.bag
+
+  figure_8_morning_2023-09-12-10-28-04:
+    bagfiles:
+      - bags/figure_8_morning_2023-09-12-10-28-04/figure_8_morning_0.bag
+
+  figure_8_morning_2023-09-12-10-37-17:
+    bagfiles:
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_0.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_1.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_2.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_3.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_4.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_5.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_6.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_7.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_8.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_9.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_10.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_11.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_12.bag
+      - bags/figure_8_morning_2023-09-12-10-37-17/figure_8_morning_13.bag
+
+  figure_8_morning_slow_2023-09-12-11-06-32:
+    bagfiles:
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_0.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_1.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_2.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_3.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_4.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_5.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_6.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_7.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_8.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_9.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_10.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_11.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_12.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_13.bag
+      - bags/figure_8_morning_slow_2023-09-12-11-06-32/figure_8_morning_slow_14.bag
+
+  figure_8_to_turnpike_2023-09-12-12-22-45:
+    bagfiles:
+      - bags/figure_8_to_turnpike_2023-09-12-12-22-45/figure_8_to_turnpike_0.bag
+      - bags/figure_8_to_turnpike_2023-09-12-12-22-45/figure_8_to_turnpike_1.bag
+      - bags/figure_8_to_turnpike_2023-09-12-12-22-45/figure_8_to_turnpike_2.bag
+
+  figure_8_to_turnpike_pt2_2023-09-12-12-28-48:
+    bagfiles:
+      - bags/figure_8_to_turnpike_pt2_2023-09-12-12-28-48/figure_8_to_turnpike_pt2_0.bag
+      - bags/figure_8_to_turnpike_pt2_2023-09-12-12-28-48/figure_8_to_turnpike_pt2_1.bag
+      - bags/figure_8_to_turnpike_pt2_2023-09-12-12-28-48/figure_8_to_turnpike_pt2_2.bag
+
+  figure_8_turnpike_2023-09-13-17-40-27:
+    bagfiles:
+      - bags/figure_8_turnpike_2023-09-13-17-40-27/figure_8_turnpike_0.bag
+      - bags/figure_8_turnpike_2023-09-13-17-40-27/figure_8_turnpike_1.bag
+      - bags/figure_8_turnpike_2023-09-13-17-40-27/figure_8_turnpike_2.bag
+
+  figure_8_turnpike_2023-09-13-17-47-52:
+    bagfiles:
+      - bags/figure_8_turnpike_2023-09-13-17-47-52/figure_8_turnpike_0.bag
+
+  gupta_2023-09-13-16-57-23:
+    bagfiles:
+      - bags/gupta_2023-09-13-16-57-23/gupta_0.bag
+      - bags/gupta_2023-09-13-16-57-23/gupta_1.bag
+      - bags/gupta_2023-09-13-16-57-23/gupta_2.bag
+
+  gupta_2023-09-14-10-44-56:
+    bagfiles:
+      - bags/gupta_2023-09-14-10-44-56/gupta_0.bag
+
+  gupta_2023-09-14-10-46-16:
+    bagfiles:
+      - bags/gupta_2023-09-14-10-46-16/gupta_0.bag
+
+  gupta_2023-09-14-10-47-09:
+    bagfiles:
+      - bags/gupta_2023-09-14-10-47-09/gupta_0.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_1.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_2.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_3.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_4.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_5.bag
+      - bags/gupta_2023-09-14-10-47-09/gupta_6.bag
+
+  gupta_2023-09-14-11-12-19:
+    bagfiles:
+      - bags/gupta_2023-09-14-11-12-19/gupta_0.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_1.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_2.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_3.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_4.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_5.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_6.bag
+      - bags/gupta_2023-09-14-11-12-19/gupta_7.bag
+
+  gupta_2023-09-14-14-18-15:
+    bagfiles:
+      - bags/gupta_2023-09-14-14-18-15/gupta_0.bag
+
+  gupta_skydio_2023-09-14-11-03-09:
+    bagfiles:
+      - bags/gupta_skydio_2023-09-14-11-03-09/gupta_skydio_0.bag
+      - bags/gupta_skydio_2023-09-14-11-03-09/gupta_skydio_1.bag
+      - bags/gupta_skydio_2023-09-14-11-03-09/gupta_skydio_2.bag
+
+  gupta_warehouse_2023-09-13-19-12-49:
+    bagfiles:
+      - bags/gupta_warehouse_2023-09-13-19-12-49/gupta_warehouse_0.bag
+
+  meadow_turnpike_2023-09-14-13-35-35:
+    bagfiles:
+      - bags/meadow_turnpike_2023-09-14-13-35-35/meadow_turnpike_0.bag
+      - bags/meadow_turnpike_2023-09-14-13-35-35/meadow_turnpike_1.bag
+      - bags/meadow_turnpike_2023-09-14-13-35-35/meadow_turnpike_2.bag
+      - bags/meadow_turnpike_2023-09-14-13-35-35/meadow_turnpike_3.bag
+
+  meadows_2023-09-14-11-45-21:
+    bagfiles:
+      - bags/meadows_2023-09-14-11-45-21/meadows_0.bag
+
+  meadows_2023-09-14-12-05-05:
+    bagfiles:
+      - bags/meadows_2023-09-14-12-05-05/meadows_0.bag
+
+  meadows_2023-09-14-12-07-28:
+    bagfiles:
+      - bags/meadows_2023-09-14-12-07-28/meadows_0.bag
+
+  meadows_2023-09-14-12-08-57:
+    bagfiles:
+      - bags/meadows_2023-09-14-12-08-57/meadows_0.bag
+      - bags/meadows_2023-09-14-12-08-57/meadows_1.bag
+      - bags/meadows_2023-09-14-12-08-57/meadows_2.bag
+      - bags/meadows_2023-09-14-12-08-57/meadows_3.bag
+
+  meadows_2023-09-14-12-17-25:
+    bagfiles:
+      - bags/meadows_2023-09-14-12-17-25/meadows_0.bag
+
+  meadows_2023-09-14-12-18-22:
+    bagfiles:
+      - bags/meadows_2023-09-14-12-18-22/meadows_0.bag
+      - bags/meadows_2023-09-14-12-18-22/meadows_1.bag
+
+  rough_rider_2023-09-14-12-57-00:
+    bagfiles:
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_0.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_1.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_2.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_3.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_4.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_5.bag
+      - bags/rough_rider_2023-09-14-12-57-00/rough_rider_6.bag
+
+  sam_loop_2023-09-27-12-41-22:
+    bagfiles:
+      - bags/sam_loop_2023-09-27-12-41-22/sam_loop_0.bag
+
+  sam_loop_2023-09-27-12-42-17:
+    bagfiles:
+      - bags/sam_loop_2023-09-27-12-42-17/sam_loop_0.bag
+
+  sam_loop_2023-09-27-13-04-54:
+    bagfiles:
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_0.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_1.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_2.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_3.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_4.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_5.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_6.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_7.bag
+      - bags/sam_loop_2023-09-27-13-04-54/sam_loop_8.bag
+
+  slag_heap_2023-09-14-12-23-05:
+    bagfiles:
+      - bags/slag_heap_2023-09-14-12-23-05/slag_heap_0.bag
+      - bags/slag_heap_2023-09-14-12-23-05/slag_heap_1.bag
+
+  slag_heap_skydio_2023-09-14-12-32-13:
+    bagfiles:
+      - bags/slag_heap_skydio_2023-09-14-12-32-13/slag_heap_skydio_0.bag
+      - bags/slag_heap_skydio_2023-09-14-12-32-13/slag_heap_skydio_1.bag
+
+  slag_heap_skydio_2023-09-14-12-36-46:
+    bagfiles:
+      - bags/slag_heap_skydio_2023-09-14-12-36-46/slag_heap_skydio_0.bag
+
+  slag_heap_skydio_2023-09-14-12-38-57:
+    bagfiles:
+      - bags/slag_heap_skydio_2023-09-14-12-38-57/slag_heap_skydio_0.bag
+
+  slag_heap_skydio_2023-09-14-12-39-40:
+    bagfiles:
+      - bags/slag_heap_skydio_2023-09-14-12-39-40/slag_heap_skydio_0.bag
+
+  trash_2023-09-14-12-03-21:
+    bagfiles:
+      - bags/trash_2023-09-14-12-03-21/trash_0.bag
+
+  turnpike_2023-09-12-12-39-19:
+    bagfiles:
+      - bags/turnpike_2023-09-12-12-39-19/turnpike_0.bag
+      - bags/turnpike_2023-09-12-12-39-19/turnpike_1.bag
+
+  turnpike_2023-09-12-12-42-49:
+    bagfiles:
+      - bags/turnpike_2023-09-12-12-42-49/turnpike_0.bag
+      - bags/turnpike_2023-09-12-12-42-49/turnpike_1.bag
+
+  turnpike_2023-09-12-12-47-34:
+    bagfiles:
+      - bags/turnpike_2023-09-12-12-47-34/turnpike_0.bag
+
+  turnpike_2023-09-12-12-53-32:
+    bagfiles:
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_0.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_1.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_2.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_3.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_4.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_5.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_6.bag
+      - bags/turnpike_2023-09-12-12-53-32/turnpike_7.bag
+
+  turnpike_2023-09-13-17-59-09:
+    bagfiles:
+      - bags/turnpike_2023-09-13-17-59-09/turnpike_0.bag
+
+  turnpike_2023-09-13-18-09-45:
+    bagfiles:
+      - bags/turnpike_2023-09-13-18-09-45/turnpike_0.bag
+      - bags/turnpike_2023-09-13-18-09-45/turnpike_1.bag
+      - bags/turnpike_2023-09-13-18-09-45/turnpike_2.bag
+
+  turnpike_2023-09-13-18-15-03:
+    bagfiles:
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_0.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_1.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_2.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_3.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_4.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_5.bag
+      - bags/turnpike_2023-09-13-18-15-03/turnpike_6.bag
+
+  turnpike_2023-09-13-18-37-40:
+    bagfiles:
+      - bags/turnpike_2023-09-13-18-37-40/turnpike_0.bag
+      - bags/turnpike_2023-09-13-18-37-40/turnpike_1.bag
+      - bags/turnpike_2023-09-13-18-37-40/turnpike_2.bag
+
+  turnpike_2023-09-13-18-42-57:
+    bagfiles:
+      - bags/turnpike_2023-09-13-18-42-57/turnpike_0.bag
+      - bags/turnpike_2023-09-13-18-42-57/turnpike_1.bag
+      - bags/turnpike_2023-09-13-18-42-57/turnpike_2.bag
+      - bags/turnpike_2023-09-13-18-42-57/turnpike_3.bag
+      - bags/turnpike_2023-09-13-18-42-57/turnpike_4.bag
+
+  turnpike_2023-09-14-13-20-40:
+    bagfiles:
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_0.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_1.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_2.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_3.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_4.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_5.bag
+      - bags/turnpike_2023-09-14-13-20-40/turnpike_6.bag
+
+  turnpike_flat_2023-09-12-13-08-55:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-08-55/turnpike_flat_0.bag
+
+  turnpike_flat_2023-09-12-13-11-44:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_0.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_1.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_2.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_3.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_4.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_5.bag
+      - bags/turnpike_flat_2023-09-12-13-11-44/turnpike_flat_6.bag
+
+  turnpike_flat_2023-09-12-13-38-55:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-38-55/turnpike_flat_0.bag
+
+  turnpike_flat_2023-09-12-13-40-02:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-40-02/turnpike_flat_0.bag
+
+  turnpike_flat_2023-09-12-13-41-45:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-41-45/turnpike_flat_0.bag
+
+  turnpike_flat_2023-09-12-13-42-26:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_0.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_1.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_2.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_3.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_4.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_5.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_6.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_7.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_8.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_9.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_10.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_11.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_12.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_13.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_14.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_15.bag
+      - bags/turnpike_flat_2023-09-12-13-42-26/turnpike_flat_16.bag
+
+  turnpike_flat_2023-09-12-14-16-06:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-14-16-06/turnpike_flat_0.bag
+
+  turnpike_flat_2023-09-12-14-21-03:
+    bagfiles:
+      - bags/turnpike_flat_2023-09-12-14-21-03/turnpike_flat_0.bag
+      - bags/turnpike_flat_2023-09-12-14-21-03/turnpike_flat_1.bag
+      - bags/turnpike_flat_2023-09-12-14-21-03/turnpike_flat_2.bag
+      - bags/turnpike_flat_2023-09-12-14-21-03/turnpike_flat_3.bag
+      - bags/turnpike_flat_2023-09-12-14-21-03/turnpike_flat_4.bag
+
+  turnpike_skydio_2023-09-13-18-00-11:
+    bagfiles:
+      - bags/turnpike_skydio_2023-09-13-18-00-11/turnpike_skydio_0.bag
+      - bags/turnpike_skydio_2023-09-13-18-00-11/turnpike_skydio_1.bag
+      - bags/turnpike_skydio_2023-09-13-18-00-11/turnpike_skydio_2.bag
+      - bags/turnpike_skydio_2023-09-13-18-00-11/turnpike_skydio_3.bag
+
+  turnpike_skydio_2023-09-14-13-57-56:
+    bagfiles:
+      - bags/turnpike_skydio_2023-09-14-13-57-56/turnpike_skydio_0.bag
+
+  turnpike_to_gupta_flat_2023-09-12-14-31-21:
+    bagfiles:
+      - bags/turnpike_to_gupta_flat_2023-09-12-14-31-21/turnpike_to_gupta_flat_0.bag
+      - bags/turnpike_to_gupta_flat_2023-09-12-14-31-21/turnpike_to_gupta_flat_1.bag
+
+  turnpike_warehouse_2023-09-13-19-03-05:
+    bagfiles:
+      - bags/turnpike_warehouse_2023-09-13-19-03-05/turnpike_warehouse_0.bag
+      - bags/turnpike_warehouse_2023-09-13-19-03-05/turnpike_warehouse_1.bag
+      - bags/turnpike_warehouse_2023-09-13-19-03-05/turnpike_warehouse_2.bag
+
+  turnpike_warehouse_2023-09-14-14-05-14:
+    bagfiles:
+      - bags/turnpike_warehouse_2023-09-14-14-05-14/turnpike_warehouse_0.bag
+
+  turnpike_warehouse_2023-09-14-14-07-12:
+    bagfiles:
+      - bags/turnpike_warehouse_2023-09-14-14-07-12/turnpike_warehouse_0.bag
+      - bags/turnpike_warehouse_2023-09-14-14-07-12/turnpike_warehouse_1.bag
+      - bags/turnpike_warehouse_2023-09-14-14-07-12/turnpike_warehouse_2.bag
+
+  warehouse_gupta_2023-09-13-16-23-26:
+    bagfiles:
+      - bags/warehouse_gupta_2023-09-13-16-23-26/warehouse_gupta_0.bag
+
+  warehouse_gupta_2023-09-13-16-27-05:
+    bagfiles:
+      - bags/warehouse_gupta_2023-09-13-16-27-05/warehouse_gupta_0.bag
+
+  # NOTE: Exclude this bag because of bad odom
+  # warehouse_gupta_2023-09-13-16-28-57:
+  #   bagfiles:
+  #     - bags/warehouse_gupta_2023-09-13-16-28-57/warehouse_gupta_0.bag
+  #     - bags/warehouse_gupta_2023-09-13-16-28-57/warehouse_gupta_1.bag
+  #     - bags/warehouse_gupta_2023-09-13-16-28-57/warehouse_gupta_2.bag
+  #     - bags/warehouse_gupta_2023-09-13-16-28-57/warehouse_gupta_3.bag
+  #     - bags/warehouse_gupta_2023-09-13-16-28-57/warehouse_gupta_4.bag
+
+  warehouse_gupta_2023-09-13-16-52-58:
+    bagfiles:
+      - bags/warehouse_gupta_2023-09-13-16-52-58/warehouse_gupta_0.bag
+      - bags/warehouse_gupta_2023-09-13-16-52-58/warehouse_gupta_1.bag
+
+  warehouse_gupta_skydio_2023-09-13-16-44-00:
+    bagfiles:
+      - bags/warehouse_gupta_skydio_2023-09-13-16-44-00/warehouse_gupta_skydio_0.bag
+
+  warehouse_gupta_skydio_2023-09-13-16-45-20:
+    bagfiles:
+      - bags/warehouse_gupta_skydio_2023-09-13-16-45-20/warehouse_gupta_skydio_0.bag
+      - bags/warehouse_gupta_skydio_2023-09-13-16-45-20/warehouse_gupta_skydio_1.bag
+
+  warehouse_to_fence_2023-09-12-10-19-17:
+    bagfiles:
+      - bags/warehouse_to_fence_2023-09-12-10-19-17/warehouse_to_fence_0.bag

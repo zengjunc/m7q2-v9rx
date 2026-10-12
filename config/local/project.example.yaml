@@ -1,0 +1,19 @@
+# LOCAL ADDITION. Relative paths are resolved against the repository root.
+scene: 2023-11-02-16-00-43_down_meadows
+cpu_threads: 4
+environments:
+  pf: /path/to/conda/env/bin/python
+  cuvslam: /path/to/cuvslam/venv/bin/python
+  bevloc: /path/to/bevloc/venv/bin/python
+  bevloc_native_prefix: /path/to/gdal/conda/env
+paths:
+  raw_root: data/raw
+  extracted_root: data/extracted
+  processed_root: data/TartanDrive2
+  bevloc_data_root: data/bevloc
+  map: data/maps/gascola.tif
+  bevloc_map: data/maps/gascola_26917_03.tif
+  bevloc_vrt: data/maps/gascola_26917_03.vrt
+  pf_checkpoint: weights/BEV-Patch-Net_e4_3.85.pth
+  bevloc_checkpoint: weights/bevloc-b=8-g=resnet101-a=resnet101-5.ckpt
+  output_root: output/local

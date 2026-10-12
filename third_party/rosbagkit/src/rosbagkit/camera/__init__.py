@@ -1,0 +1,1 @@
+"""Camera subpackage for rosbagkit."""
