@@ -99,3 +99,7 @@ PF 十帧结果与既有 2290 帧运行的前十帧最大差异约 4.8e-7；BEVL
 ### 统一环境完整轨迹复查
 
 四个项目运行方式完整执行当前场景，无中途异常；轨迹有效值和时间戳检查通过。PF 原环境同入口整轨迹对照基本一致，BEVLoc 完整 CSV 与旧运行一致。报告更新至 requirements/unified-validation.json；AMP 限制和 Super Odometry 预计算模式边界不变。
+
+### 删除旧环境（2026-10-13）
+
+确认统一环境没有引用旧 site-packages/链接且旧环境无运行进程后，删除旧 PF、BEVLoc 原生/虚拟环境和 cuVSLAM 虚拟环境，并移除 .envs、link_envs.py、多环境配置及旧版本记录。仅维护 .env-unified；历史对照数据保留。数据、地图、权重和实验输出不删除。

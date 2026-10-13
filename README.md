@@ -31,7 +31,7 @@ conda activate ./.env-unified
 
 `config/local/project.example.yaml` 的数据/模型路径均相对仓库根目录，所有方法使用 `.env-unified/bin/python`。启动器优先读取可选 project.yaml，否则自动使用共享模板，组员通常不必修改 YAML，也不需要环境链接。
 
-数据统一位于 data/raw、data/extracted、data/TartanDrive2、data/bevloc、data/maps，公开权重位于 weights。旧多环境配置和 .envs 绑定仍可通过 project.multi-env.yaml 显式使用。
+数据统一位于 data/raw、data/extracted、data/TartanDrive2、data/bevloc、data/maps，公开权重位于 weights。
 
 当前测试轨迹是 `2023-11-02-16-00-43_down_meadows`（TD08），默认使用 2290 帧版本。已有深度和 cuVSLAM 文件，可以直接运行 PF：
 

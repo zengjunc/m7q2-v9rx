@@ -16,7 +16,7 @@ python scripts/local/run.py cuvslam
 python scripts/local/run.py superodom
 ```
 
-默认共享模板和本机 project.yaml 都已指向 `.env-unified/bin/python`，BEVLoc 原生库前缀也是 `.env-unified`。**统一环境不再需要 link_envs.py，也不需要四个 .envs 链接。** 原环境和绑定保留为回退，不删除。
+默认共享模板和本机 project.yaml 都已指向 `.env-unified/bin/python`，BEVLoc 原生库前缀也是 `.env-unified`。**统一环境不再需要 link_envs.py，也不需要四个 .envs 链接。** 2026-10-13 已删除旧环境、绑定及回退配置，仅维护统一环境。
 
 新机器只需在自己的仓库内安装同名 `.env-unified`，配置路径无需改用户名或服务器目录。本机无需重复以下安装过程。
 
@@ -140,15 +140,11 @@ Super Odometry 此处仍使用数据集预计算轨迹；统一环境不代表�
 
 详细报告和日志位于 `output/verification/unified_*`，不上传大文件。
 
-## 6. 回退到原环境
+## 6. 环境维护
 
-原环境保留，可显式指定：
+2026-10-13 已按用户要求移除旧 PF、BEVLoc、cuVSLAM 环境及 .envs 链接、link_envs.py 和 project.multi-env.yaml。历史新旧环境对照报告保留，但旧环境已不能直接运行。
 
-```bash
-python scripts/local/run.py pf --config config/local/project.multi-env.yaml
-```
-
-此配置继续使用 .envs 中已有的独立环境绑定；不重新安装、不影响原环境。新机器通常无需准备这套回退方案。
+之后只维护仓库内 .env-unified；需要重建时使用第 2 节固定依赖。删除旧环境不涉及数据、地图、权重或实验结果。
 
 ## 7. 后续整条轨迹复查（2026-10-12）
 

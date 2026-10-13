@@ -1,34 +1,19 @@
 # 环境与数据
 
-当前推荐 [统一环境](UNIFIED_ENV.md)：所有运行方式共用 .env-unified，无需绑定四个环境；参考训练使用 FP32。下节独立环境说明仅用于旧方案回退。
+当前推荐 [统一环境](UNIFIED_ENV.md)：所有运行方式共用 .env-unified，无需绑定四个环境；参考训练使用 FP32。旧环境已删除，不再提供多环境回退。
 
 ## 环境边界
 
-共享配置使用仓库相对路径，不写用户名或服务器目录。每台机器安装环境后，将环境前缀绑定至固定名称：
+当前只维护 .env-unified，旧环境和环境绑定已删除。安装版本、原生依赖与 cuVSLAM 构建步骤以 [UNIFIED_ENV.md](UNIFIED_ENV.md) 为准，验证报告见 requirements/unified-validation.json。
 
 ```bash
-conda activate bev-patch-pf
-python scripts/local/link_envs.py --pf "$CONDA_PREFIX"
-python scripts/local/link_envs.py --cuvslam /本机/cuVSLAM环境 \
-  --bevloc /本机/BEVLoc虚拟环境 --bevloc-native /本机/GDAL环境
+conda activate ./.env-unified
+python scripts/local/run.py pf
 ```
 
-| 配置项 | 共享路径 | 用途 |
-|---|---|---|
-| environments.pf | `.envs/pf/bin/python` | PF、训练、提取、深度与 VO 评估 |
-| environments.cuvslam | `.envs/cuvslam/bin/python` | cuVSLAM Python 接口 |
-| environments.bevloc | `.envs/bevloc/bin/python` | BEVLoc 推理 |
-| environments.bevloc_native_prefix | `.envs/bevloc-native` | GDAL/PROJ 原生库 |
+所有模型的 environments 配置都指向 .env-unified/bin/python，BEVLoc 原生库前缀也是 .env-unified。启动器设置库路径和 PROJ_DATA，不自动安装或升级包。训练参考使用 amp=False。
 
-.envs 是本机链接，不上传 Git，不复制或移动已安装的 conda/venv。组员仅处理这一次环境绑定，通常不修改共享 YAML。启动器本身需 PyYAML，从 PF 环境执行即可。
-
-PF 安装参考官方 README/pyproject.toml，Python 3.12、conda-forge manifpy；启动器设置环境 lib 路径，避免加载过旧的系统 libstdc++。数据工具额外需要 boto3、rosbags；rosbagkit 源码已随仓库提供并加入 PYTHONPATH。
-
-BEVLoc 需独立兼容环境，不能直接用其原 poetry.lock 降级 PF 环境。当前验证版本见 `config/local/environment_versions.json`；关键版本是 torch 2.6.0+cu124、torchvision 0.21.0+cu124、numpy 1.26.4、transformers 4.38.2、Lightning 2.5.6、GTSAM 4.2.1、Open3D-CPU 0.19.0、GDAL 3.13.3。GDAL 来自 conda，Python binding 必须匹配原生库。入口先导入 GDAL，启动器设置 PROJ_DATA 和库路径。
-
-cuVSLAM 当前为 Python 3.10、本地 v17.0.0 源码构建、CUDA 12.4、SM86。公开旧 wheel 的 CUDA 要求与本机驱动不匹配，所以没有采用它。组员机器需安装与自己驱动匹配的 cuVSLAM 绑定；源码及构建说明使用 nvidia-isaac/cuVSLAM 上游仓库。Git 仓库不包含 CUDA 编译产物或可迁移的二进制环境。
-
-以上是本机已验证组合，不承诺不同系统仅复制环境目录即可运行。安装依赖在对应独立环境进行；启动器不会自动安装或升级任何包。
+共享配置使用仓库相对路径；新机器在仓库内安装同名环境，无需修改服务器用户名或绑定四套环境。cuVSLAM 使用新编译的 Python3.12 绑定；GDAL 与 manifpy 使用固定 conda 原生依赖，不能只靠 pip 安装替代。
 
 ## 数据布局
 
