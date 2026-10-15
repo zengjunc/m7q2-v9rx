@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：将运动、地图位置等约束组合到因子图进行状态估计。
 # Third Party
 import gtsam
 import gtsam.noiseModel

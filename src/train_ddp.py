@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：分布式训练入口：协调多 GPU 的数据加载、参数更新和验证。
 import gc
 import json
 import logging

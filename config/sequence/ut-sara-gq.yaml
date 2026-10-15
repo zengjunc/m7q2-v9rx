@@ -1,3 +1,4 @@
+# 原作者序列配置（ut-sara-gq）：按时间读取连续定位输入与测试场景。
 _target_: dataset.gq.GQSequence
 name: "UT-SARA-GQ"
 

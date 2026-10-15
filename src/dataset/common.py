@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：数据加载基类：读取 RGB/深度、调整内参，并组织地图裁剪与候选位姿。
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

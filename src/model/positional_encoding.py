@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：为二维网格特征添加位置编码。
 import math
 
 import torch

@@ -1,3 +1,4 @@
+# 原作者路径配置：指定已有轨迹及地图，供展示与路径距离评估使用。
 geotiff: data/ARL_Jackal/onioncreek_EPSG32614_scale02_022726.tiff
 
 viz:

@@ -1,4 +1,4 @@
-# LOCAL ADDITION: project data/baseline tool; not upstream BEV-Patch-PF.
+# 复现适配：使用校正左右目和 StereoSGBM 生成 uint16 毫米深度图，无效值为零。
 """Generate rectified stereo depth in uint16 millimeters, without changing RGB."""
 import argparse
 import json

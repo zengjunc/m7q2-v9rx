@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：评估地图候选检索表现，包括 Recall@k、排名与分数分离指标。
 from collections import deque
 
 import matplotlib.pyplot as plt

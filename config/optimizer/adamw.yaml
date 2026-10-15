@@ -1,3 +1,4 @@
+# 原作者优化器配置：学习率、权重衰减和 AdamW 参数。
 _target_: torch.optim.AdamW
 _partial_: true
 

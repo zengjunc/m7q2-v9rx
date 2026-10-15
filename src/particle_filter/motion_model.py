@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：将 VO 相对动作施加到粒子，并按运动量和近期波动添加噪声。
 from collections import deque
 
 import numpy as np

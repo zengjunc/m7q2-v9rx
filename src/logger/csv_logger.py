@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：将时间戳和轨迹等逐行写入 CSV。
 import csv
 import logging
 import os

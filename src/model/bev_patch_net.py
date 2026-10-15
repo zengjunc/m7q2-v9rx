@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：主网络：组合地面 BEV、航拍特征和候选地图块，输出匹配分数与不确定性。
 import logging
 
 import torch

@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：利用深度、内参和相机外参将图像特征投影到 BEV 网格，并加权聚合。
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

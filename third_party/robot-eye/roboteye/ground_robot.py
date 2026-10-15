@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：描述机器人、相机及坐标系变换，供 BEVLoc 几何计算调用。
 # Third Party
 import numpy as np
 from pyquaternion import Quaternion

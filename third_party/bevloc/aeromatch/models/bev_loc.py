@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：组合 BEV 与航拍嵌入、粗细匹配及因子图；包含坐标和连续运动适配。
 """
 #!Code created by:
 #!Chris Klammer - Robot Perception Lab (RPL) - Carnegie Mellon University

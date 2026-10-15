@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 原作者实现（复现导读）：读取多方法轨迹，按时间对应计算位置与朝向误差，生成结果表和图。
 """
 Simple ATE evaluation script for particle filter results
 """

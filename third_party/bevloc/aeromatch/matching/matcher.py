@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：进行航拍候选粗检索和局部精匹配。
 # Third Party
 import cv2
 import numpy as np

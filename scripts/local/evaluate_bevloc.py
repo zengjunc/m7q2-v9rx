@@ -1,4 +1,4 @@
-# LOCAL ADDITION: BEVLoc input/evaluation adapter.
+# 复现适配：读取 BEVLoc 保存的预测和配对参考，计算米制位置指标并绘图。
 """Evaluate saved BEVLoc poses against the paired official reference poses."""
 import argparse
 import json

@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：读取 TartanDrive 图像、毫米深度和参考位姿；序列类将 cuVSLAM 位姿转换为平面动作。
 from pathlib import Path
 
 import cv2

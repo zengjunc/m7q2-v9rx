@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：绘制训练与验证特征图，辅助观察网络匹配表现。
 from __future__ import annotations
 
 import logging

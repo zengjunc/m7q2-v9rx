@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：深度消息与相关表示的转换工具。
 import cv2
 import numpy as np
 from tqdm import tqdm

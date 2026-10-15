@@ -1,3 +1,4 @@
+# 原作者评估配置：指定场景、各方法轨迹位置及绘图方式。
 experiment_name: "jackal_eastwood"
 
 dataset:

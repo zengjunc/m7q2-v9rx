@@ -1,3 +1,4 @@
+# 原作者模型配置：主干网络、BEV 网格及特征维度。
 _target_: model.bev_patch_net.BEVPatchNet
 name: "BEV-Patch-Net"
 

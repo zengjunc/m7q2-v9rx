@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：提供传感器时间对应与数据同步辅助函数。
 import bisect
 from typing import Any
 

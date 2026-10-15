@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：封装 DINOv3 ConvNeXt 主干，提取地面与航拍图像的多尺度特征。
 import timm
 import torch
 import torch.nn as nn

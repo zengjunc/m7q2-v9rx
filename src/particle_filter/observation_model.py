@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：裁取局部航拍图，调用网络匹配粒子，并用不确定性调节观测对数似然。
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

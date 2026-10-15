@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：图像特征编码与主干加载；完整权重模式包含离线加载适配。
 """
 This entire module was inspired by SimpleBEV and Fiery.
 https://github.com/aharley/simple_bev

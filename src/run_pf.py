@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：组织完整轨迹定位：初始化粒子，逐帧预测、观测更新、重采样并保存位姿。
 import os
 from contextlib import nullcontext
 from pathlib import Path

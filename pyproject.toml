@@ -1,3 +1,4 @@
+# 原作者项目与依赖声明：保留项目名称、署名及许可证信息。
 [project]
 name = "BEV-Patch-PF"
 version = "0.1.0"

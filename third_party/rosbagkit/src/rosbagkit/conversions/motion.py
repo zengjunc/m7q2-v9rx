@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：从运动/位姿消息提取用于导出的数值。
 def read_odometry_msg(msg) -> dict:
     """nav_msgs/Odometry"""
     return {

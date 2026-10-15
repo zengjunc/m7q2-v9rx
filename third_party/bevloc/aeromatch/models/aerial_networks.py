@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：编码航拍地图块，生成粗细检索所需特征。
 # Third Party
 import torch
 import torch.nn as nn

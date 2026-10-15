@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：网络公共模块：归一化与特征处理等基础组件。
 from __future__ import annotations
 
 from collections.abc import Iterable

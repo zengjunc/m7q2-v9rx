@@ -1,4 +1,5 @@
 # @package _global_
+# 原作者 PF 配置：组合模型与序列，设置初始化、运动、观测和重采样参数。
 
 defaults:
   - model: bev_patch_net

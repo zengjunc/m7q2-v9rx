@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：数据集工具：时间插值、位姿表示转换、相邻动作计算与批数据整理。
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any

@@ -1,4 +1,4 @@
-# LOCAL ADDITION: BEVLoc input/evaluation adapter.
+# 复现适配：复用图像/深度，整理参考、TartanVO 和真实 IMU 为 BEVLoc 输入格式。
 """Adapt an already processed scene to BEVLoc's official TartanDrive loader.
 
 Images and millimeter depth are hardlinked. Full GPS/VO poses and real Novatel

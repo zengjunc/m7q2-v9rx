@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：加载地理地图、转换坐标并生成匹配所需的地图裁剪。
 # Third Party
 import cv2
 import numpy as np

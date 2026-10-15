@@ -1,3 +1,4 @@
+# 原作者数据集配置（ut-sara-gq）：数据路径、训练/验证划分、候选采样与增强。
 _target_: dataset.gq.GQDataset
 name: "UT-SARA-GQ"
 

@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：根据绘图配置，在航拍地图上展示多条已有轨迹。
 """Visualize multiple trajectories on one GeoTIFF using explicit file paths."""
 
 import argparse

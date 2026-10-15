@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 原作者实现（复现导读）：计算路径之间的 Hausdorff 空间距离，比较路径形状偏离。
 """Compute Hausdorff distance between a reference trajectory and other runs."""
 
 from __future__ import annotations

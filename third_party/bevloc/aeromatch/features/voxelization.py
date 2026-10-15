@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：将多帧视觉特征结合深度和位姿映射到局部体素/BEV 空间。
 # Third Party
 import numpy as np
 import torch

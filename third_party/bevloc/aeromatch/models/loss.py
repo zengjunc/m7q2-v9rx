@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：BEVLoc 训练损失；包含复现所需的数值稳定性适配。
 # Third Party
 import torch
 import torch.nn as nn

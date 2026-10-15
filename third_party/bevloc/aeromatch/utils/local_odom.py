@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：处理局部 VO 与坐标变换，包含四元数和相邻运动适配。
 # Third Party
 import numpy as np
 import torch

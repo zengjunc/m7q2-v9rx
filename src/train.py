@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：单进程训练入口：构建数据集、优化网络并进行检索验证和权重保存。
 import gc
 import json
 import os

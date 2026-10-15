@@ -1,3 +1,4 @@
+# 复现适配：评估 PF、cuVSLAM 和预计算 Super Odometry 的二维位置误差。
 """LOCAL ADDITION: reference-initialized VO baselines and direct XY error metrics."""
 import argparse
 import json

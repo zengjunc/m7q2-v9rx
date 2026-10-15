@@ -1,5 +1,5 @@
-# LOCAL ADDITION: project data/baseline tool; not upstream BEV-Patch-PF.
 #!/usr/bin/env python3
+# 复现适配：按官方清单下载单条轨迹的全部 bag 分片，保留部分下载以便继续。
 """Download one TartanDrive 2.0 run without a graphical desktop.
 
 Uses the same public endpoint and assets/files.yaml as tartandrive_gui.py.

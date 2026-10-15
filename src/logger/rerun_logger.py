@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：使用 Rerun 记录和显示图像、粒子及轨迹等推理状态。
 import os
 import shutil
 import subprocess

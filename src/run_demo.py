@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：演示 BEV 与航拍特征匹配，便于观察模型输出。
 import logging
 from pathlib import Path
 

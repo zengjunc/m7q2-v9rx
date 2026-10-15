@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：BEVLoc 测试工具与结果导出；包含复现所需的兼容适配。
 # Third Party
 import numpy as np
 from pyquaternion import Quaternion

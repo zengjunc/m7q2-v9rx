@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：缓存并共享 GeoTIFF 对象，避免同一地图被重复加载。
 from __future__ import annotations
 
 import threading

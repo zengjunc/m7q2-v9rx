@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 复现适配：统一命令入口：读取共享路径配置，调度数据准备、训练、四方法推理与评估。
 """LOCAL ADDITION: shared project commands; upstream algorithms remain in src/."""
 import argparse
 import json
@@ -25,7 +26,10 @@ def main():
     p.add_argument('--output', type=Path)
     p.add_argument('--checkpoint', type=Path, help='Override PF/BEVLoc inference weights for this run')
     p.add_argument('--dry-run', action='store_true')
+    p.add_argument('--mask-invalid-depth', action='store_true', help='PF only: exclude invalid depth from BEV projection')
     a, extra = p.parse_known_args()
+    if a.mask_invalid_depth and a.command != 'pf':
+        p.error('--mask-invalid-depth is only supported for pf')
     if a.checkpoint is not None and a.command not in ['pf', 'bevloc']:
         p.error('--checkpoint is only supported for pf/bevloc; train uses ckpt_path=...')
     if extra and a.command != 'train':
@@ -95,6 +99,7 @@ def main():
         commands = [cmd+[str(LOCAL/'pf.py'),'--scene-dir',str(data),'--map',str(loc('map')),
                          '--checkpoint',str(path(a.checkpoint) if a.checkpoint else loc('pf_checkpoint')),'--output',str(output)]]
         if a.limit: commands[0] += ['--limit',str(a.limit)]
+        if a.mask_invalid_depth: commands[0] += ['--mask-invalid-depth']
         commands += [cmd+[str(LOCAL/'evaluate.py'),'--method','pf','--scene-dir',str(data),'--output',str(output)]]
     elif a.command == 'train':
         # Invoke the original training pipeline; only select the TartanDrive dataset/config.

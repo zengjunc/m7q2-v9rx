@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：将已对齐的参考位姿插值到图像时间，批量输出逐帧位姿。
 """Synchronize aligned pose CSVs to image timestamps for multi-scene datasets."""
 
 import argparse

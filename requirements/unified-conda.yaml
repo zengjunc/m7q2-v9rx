@@ -1,3 +1,4 @@
+# 复现环境基础依赖：Python、NumPy、GDAL 与 manifpy 由 conda 提供。
 name: bev-unified
 channels:
   - conda-forge

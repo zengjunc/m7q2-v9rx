@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：融合多尺度地面特征，生成用于 BEV 投影的图像特征。
 """
 reference: https://github.com/SwinTransformer/Swin-Transformer-Semantic-Segmentation
 """

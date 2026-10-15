@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：按 YAML 配置遍历 bag 消息，导出图像、时间戳及位姿等数据。
 import argparse
 from collections import defaultdict
 from collections.abc import Callable

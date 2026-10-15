@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：同步 TartanDrive 三路相机与参考位姿，转换坐标并保留有效连续轨迹段。
 """Preprocess the TartanDrive2.0 dataset by syncing the odometry and image data."""
 
 import argparse

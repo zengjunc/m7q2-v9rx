@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：单个粒子的位姿、权重及便捷访问接口。
 from dataclasses import dataclass
 
 from manifpy import SE2

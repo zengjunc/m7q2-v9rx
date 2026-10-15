@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：适配 AlphaTruck 数据集的图像、深度与位姿读取。
 from pathlib import Path
 
 import cv2

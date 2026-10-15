@@ -1,4 +1,4 @@
-# LOCAL ADDITION: project data/baseline tool; not upstream BEV-Patch-PF.
+# 复现适配：配置双目相机并运行 cuVSLAM，保存左相机局部位姿与逐帧跟踪状态。
 """Headless rectified stereo cuVSLAM; exports one row per input frame."""
 import argparse
 import csv

@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：将读取的传感器消息导出为文件。
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any

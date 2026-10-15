@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：编码 BEV 特征，生成匹配描述子、区域辨识度及帧不确定性信息。
 import torch
 import torch.nn as nn
 

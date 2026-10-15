@@ -1,4 +1,4 @@
-# Recommended unified environment; all paths relative to repository root.
+# 复现配置：环境、数据、地图与权重路径；相对路径以仓库根目录为起点。
 scene: 2023-11-02-16-00-43_down_meadows
 cpu_threads: 4
 environments:
@@ -11,7 +11,7 @@ paths:
   extracted_root: data/extracted
   processed_root: data/TartanDrive2
   bevloc_data_root: data/bevloc
-  map: data/maps/gascola.tif
+  map: data/maps/gascola_26917_03.tif
   bevloc_map: data/maps/gascola_26917_03.tif
   bevloc_vrt: data/maps/gascola_26917_03.vrt
   pf_checkpoint: weights/BEV-Patch-Net_e4_3.85.pth

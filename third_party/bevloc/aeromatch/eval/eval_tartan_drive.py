@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：TartanDrive 测试入口：加载公开权重，按时序运行 BEVLoc 并导出轨迹。
 # Third Party
 # Initialize GDAL before torchvision/Pillow, which may load an older libjpeg.
 from osgeo import gdal

@@ -1,4 +1,5 @@
 # @package _global_
+# 原作者演示配置：组合网络、数据及演示运行参数。
 
 defaults:
   - model: bev_patch_net

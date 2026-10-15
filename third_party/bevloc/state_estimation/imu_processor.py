@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：处理 IMU 数据，支持状态估计中的惯性信息组织。
 # Third Party
 import numpy as np
 from pypose.module.imu_preintegrator import IMUPreintegrator

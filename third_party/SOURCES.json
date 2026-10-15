@@ -11,7 +11,7 @@
   },
   "tartandrive": {
     "source": "https://github.com/castacks/tartan_drive_2.0",
-    "contents": "official manifest, calibration, README, license; no downloaded map"
+    "contents": "official bag download manifest and rectified stereo intrinsics; original license retained"
   },
   "rosbagkit": {
     "source": "https://github.com/ut-amrl/rosbagkit",

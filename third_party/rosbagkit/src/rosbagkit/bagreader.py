@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：封装 bag 消息读取、筛选与反序列化。
 import logging
 from collections import Counter
 from pathlib import Path

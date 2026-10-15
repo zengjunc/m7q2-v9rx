@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：将图像消息转换为可保存的图像数据。
 import logging
 
 import cv2

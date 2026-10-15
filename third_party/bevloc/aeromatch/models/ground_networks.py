@@ -1,3 +1,4 @@
+# 第三方实现（复现导读）：从地面 RGB-D 时序构建 BEV 特征和地面检索嵌入。
 # Third Party
 import torch
 import torch.nn as nn

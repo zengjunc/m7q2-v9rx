@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：解码航拍多尺度特征，为地图块匹配提供空间特征。
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

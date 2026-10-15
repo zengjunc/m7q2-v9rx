@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：将网络导出为 ONNX，供后续部署使用。
 import argparse
 import gc
 import os

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# 原作者实现（复现导读）：从 GeoTIFF 中提取人工绘制的纯色路径，转换为地图坐标序列。
 """Extract ordered UTM sequence from a pure-color human-drawn path in a GeoTIFF."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# 复现环境运行依赖：安装顺序与 CUDA PyTorch 来源见 docs/UNIFIED_ENV.md。
 # Verified direct runtime versions for the unified Python 3.12 environment.
 # Install conda GDAL/manifpy and CUDA PyTorch separately; see docs/UNIFIED_ENV.md.
 numpy==1.26.4

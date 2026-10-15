@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：预处理共用工具：时间戳处理、位姿同步及图像/深度整理。
 import logging
 from pathlib import Path
 

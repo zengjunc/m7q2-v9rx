@@ -1,5 +1,5 @@
-# LOCAL ADDITION: original training settings, TartanDrive-only dataset selection.
 # @package _global_
+# 复现配置：仅选择 TartanDrive 数据，训练流程与参数沿用原作者实现。
 
 defaults:
   - model: bev_patch_net

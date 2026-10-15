@@ -1,3 +1,4 @@
+# 原作者损失配置：匹配温度及辨识度约束权重。
 _target_: model.loss.GeoLocLoss
 # Matching loss
 init_temp: 0.05

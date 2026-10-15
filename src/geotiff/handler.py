@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：读取 GeoTIFF、转换地理坐标与像素坐标，并完成局部地图裁剪和重定位。
 from __future__ import annotations
 
 import cv2

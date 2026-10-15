@@ -1,3 +1,4 @@
+# 原作者学习率配置：余弦退火重启及最低学习率。
 _target_: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
 optimizer: ${optimizer}
 T_0: ${epochs}

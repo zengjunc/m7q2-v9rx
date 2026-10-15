@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：粒子滤波主体：维护粒子、更新后验权重、判断重采样并计算估计位姿。
 from __future__ import annotations
 
 import functools

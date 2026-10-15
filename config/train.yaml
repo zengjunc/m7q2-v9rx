@@ -1,4 +1,5 @@
 # @package _global_
+# 原作者训练配置：组合多数据集、模型、损失、优化器与训练验证参数。
 
 defaults:
   - model: bev_patch_net

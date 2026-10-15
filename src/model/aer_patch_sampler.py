@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：根据候选位置与朝向，从航拍特征中采样对应 BEV 地图块。
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

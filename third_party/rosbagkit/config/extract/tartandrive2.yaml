@@ -1,3 +1,4 @@
+# 第三方提取配置：列出 TartanDrive 的传感器 topic 与导出格式。
 bagfile_root: /robodata/public_datasets/TartanDrive2
 output_root: /robodata/dlee/Datasets/TartanDrive2
 timestamp_source: bag

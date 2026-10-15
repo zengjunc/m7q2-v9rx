@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：图像读取、张量转换和地面/航拍图像归一化。
 import cv2
 import numpy as np
 import torch

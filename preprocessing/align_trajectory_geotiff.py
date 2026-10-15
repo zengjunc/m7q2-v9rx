@@ -1,3 +1,4 @@
+# 原作者实现（复现导读）：交互式调整轨迹在 GeoTIFF 上的对齐，并保存对齐结果。
 import argparse
 import json
 from dataclasses import dataclass, field

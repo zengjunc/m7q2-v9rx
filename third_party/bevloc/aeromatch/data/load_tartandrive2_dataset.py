@@ -1,4 +1,4 @@
-# LOCAL MODIFICATION: compatibility/input/motion fixes; see docs/LOCAL_CHANGES.md.
+# 第三方实现（复现导读）：组织 TartanDrive RGB-D、位姿与 IMU 时序样本，深度按毫米读取。
 # Third Party
 import cv2
 import os
