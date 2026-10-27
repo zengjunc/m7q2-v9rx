@@ -5,7 +5,7 @@
 ## 代码结构
 
 ```text
-src/                    原作者网络、训练、数据加载与粒子滤波
+src/                    原作者主体；少量复现改动在代码中注明
 config/                 官方配置；local/ 为共享路径配置
 preprocessing/          官方预处理
 paper_scripts/          官方结果分析与绘图
@@ -17,7 +17,7 @@ data/                   数据与地图（不进入 Git）
 output/local/           各方法结果（不进入 Git）
 ```
 
-`src/`、原作者配置和 `preprocessing/` 保留原算法逻辑，文件头中文注释仅用于代码阅读。复现配置 `config/train_tartandrive.yaml` 只选择 TartanDrive 训练数据；PF 适配器调用原作者推理循环，可选深度屏蔽默认关闭。BEVLoc 包含复现所需的坐标、连续运动、数据格式与无界面运行适配。第三方来源见 [SOURCES.json](third_party/SOURCES.json)，原项目说明见 [上游 README](docs/UPSTREAM_README.md)。
+主体沿用原作者算法；双目软聚合等复现改动在代码中注明，默认关闭。复现配置 `config/train_tartandrive.yaml` 只选择 TartanDrive 训练数据；PF 入口调用原作者推理循环。BEVLoc 包含复现所需的坐标、连续运动、数据格式与无界面运行适配。第三方来源见 [SOURCES.json](third_party/SOURCES.json)，原项目说明见 [上游 README](docs/UPSTREAM_README.md)。
 
 ## 安装与配置
 
@@ -54,6 +54,16 @@ python scripts/local/run.py train epochs=5 batch_size=4
 
 训练前准备配置指定的 train/val 场景。训练与网络验证使用官方代码，参考设置为 FP32；预训练推理无需重新训练。
 
+## 数据质量检查
+
+对已处理的 TartanDrive 轨迹进行只读检查：文件对应、采样间隔、来源相机配对、清晰度、曝光、深度、VO 与地图覆盖。
+
+```bash
+python scripts/local/run.py check-data --scene SCENE_NAME
+```
+
+结果位于 `output/local/<scene>/check-data/`：逐帧 CSV、汇总、检查报告和质量曲线。质量可疑只提示复查，不自动删帧或补图，详见 [全流程手册](docs/END_TO_END.md#7-数据质量检查)。
+
 ## 可选改进
 
 屏蔽零值、负值和非有限深度的 BEV 投影，默认关闭：
@@ -62,17 +72,21 @@ python scripts/local/run.py train epochs=5 batch_size=4
 python scripts/local/run.py pf --mask-invalid-depth --output output/pf_masked
 ```
 
-## 文档与获取源码
+双目一致性软聚合（默认关闭，包含无效深度屏蔽）：
+
+```bash
+python scripts/local/run.py pf --stereo-pooling --seed 42 --output output/pf_stereo
+```
+
+对左右一致性可检验且矛盾的像素，在原 BEV 聚合内降低贡献；一致与未知观测保留。通过原序列配置传递像素权重，无需重新训练。实现、缓存与已完成的多轨迹结果见 [双目软聚合](docs/DEPTH_RELIABILITY.md)。
+
+目前仅保留上述两个变体；默认结果分别进入 `pf_masked/` 和 `pf_stereo/`，原版进入 `pf/`。
+
+## 文档
 
 - [安装统一环境](docs/UNIFIED_ENV.md)
 - [数据、训练与推理全流程](docs/END_TO_END.md)
 - [代码阅读指南](docs/CODE_GUIDE.md)
+- [双目软聚合原理与结果](docs/DEPTH_RELIABILITY.md)
 
-仓库地址：https://github.com/zengjunc/auto_drive 。数据、公开权重和运行环境不随源码分发；使用前按文档准备，并通过仓库相对路径配置运行。
-
-```bash
-git clone https://github.com/zengjunc/auto_drive.git bev-patch-pf
-cd bev-patch-pf
-```
-
-原项目与第三方组件的署名、许可证和来源信息保持保留；`docs/UPSTREAM_README.md` 是原作者说明原文。
+保留原作者及第三方组件的署名与许可证，使用和分发时遵循对应许可条款。

@@ -12,6 +12,7 @@ class DINOv3_ConvNeXt_FeatureExtractor(nn.Module):
         model_name: str,
         out_indices: list[int],
         frozen: bool = True,
+        pretrained: bool = True,
         **kwargs: dict[str, any],
     ) -> None:
         super().__init__()
@@ -19,7 +20,7 @@ class DINOv3_ConvNeXt_FeatureExtractor(nn.Module):
 
         self.model = timm.create_model(
             model_name,
-            pretrained=True,
+            pretrained=pretrained,
             features_only=True,
             out_indices=out_indices,  # 1/4, 1/8, 1/16, 1/32
         )

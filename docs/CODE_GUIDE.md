@@ -57,3 +57,15 @@ PF 对空间特征和候选位姿逐网格打分，BEVLoc 对多帧表示做粗�
 学习时从 scripts/local/run.py 追到官方入口，再追核心模块；scripts/local 负责复现工程适配；无效深度屏蔽是独立可选改动，默认关闭。
 
 关键配置中的 YAML 文件附有中文说明。`config/local/bevloc.json` 是对应 BEVLoc 公开权重的复现配置，`third_party/SOURCES.json` 记录组件来源；JSON 与原始标定文件保持标准格式，不插入行注释。原项目文档和许可证保留原文。
+
+## 可选双目软聚合
+
+开启 `--stereo-pooling` 后，按下面顺序阅读复现改动：
+
+1. `config/sequence/tartandrive.yaml`：默认关闭与固定矛盾权重。
+2. `src/dataset/stereo.py`：双目一致性检查，得到每个像素的q。
+3. `src/dataset/tartandrive.py`：通过info['depth_quality']传递q。
+4. `src/model/bev_patch_net.py`：把可选q交给mapper。
+5. `src/model/bev_mapper.py`：将原聚合权重乘q，再按原方式归一化。
+
+没有新增可学习参数，也不再运行时替换模型函数。完整使用和结果见 [双目软聚合](DEPTH_RELIABILITY.md)。

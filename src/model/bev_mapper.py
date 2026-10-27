@@ -12,9 +12,10 @@ class LiftSplatBEVMapper(nn.Module):
     NOTE: max-pooling with scatter_reduce(reduce="amax") is not supported in TensorRT
     """
 
-    def __init__(self, feat_dim: int, bev_shape: tuple[int, int], **kwargs) -> None:
+    def __init__(self, feat_dim: int, bev_shape: tuple[int, int], mask_invalid_depth: bool = False, **kwargs) -> None:
         super().__init__()
         self.bev_shape = bev_shape
+        self.mask_invalid_depth = mask_invalid_depth  # 复现新增：独立屏蔽变体，默认关闭。
 
         self.feat_attn = nn.Sequential(
             nn.Conv2d(feat_dim + 1, feat_dim // 2, kernel_size=3, padding=1, bias=False),
@@ -75,7 +76,8 @@ class LiftSplatBEVMapper(nn.Module):
         return valid, idx2d
 
     def forward(
-        self, x: torch.Tensor, depth: torch.Tensor, K: torch.Tensor, cam2enu: torch.Tensor, resolution: torch.Tensor
+        self, x: torch.Tensor, depth: torch.Tensor, K: torch.Tensor, cam2enu: torch.Tensor, resolution: torch.Tensor,
+        depth_quality: torch.Tensor | None = None,
     ):
         """
         Args:
@@ -84,6 +86,7 @@ class LiftSplatBEVMapper(nn.Module):
             K: (B, 3, 3) - camera intrinsic matrix
             cam2enu: (B, 4, 4) - camera-to-ENU transformation matrix
             resolution: (B,) - BEV grid resolution (m/px)
+            depth_quality: optional (B, H, W) stereo pooling weights (复现新增，默认不启用)
         Returns:
             bev_emb: (B, C, H_bev, W_bev) - lift and splatted BEV feature
             bev_mask: (B, 1, H_bev, W_bev) - BEV mask indicating valid regions with at least one projected point
@@ -94,12 +97,22 @@ class LiftSplatBEVMapper(nn.Module):
 
         # lift/splat
         valid, idx2d = self.compute_geometry(depth, K, cam2enu, resolution)  # (B*H*W,), (num_valid,)
+        if self.mask_invalid_depth or depth_quality is not None:
+            good = (torch.isfinite(depth) & (depth > 0)).reshape(-1)
+            idx2d = idx2d[good[valid]]
+            valid = valid & good
+            if not valid.any():
+                return x.new_zeros((B, C, nx, ny)), x.new_zeros((B, 1, nx, ny))
         x_up = F.interpolate(x, size=(H, W), mode="bilinear", align_corners=False)  # (B, C, H, W)
 
         # compute attention weights for vertical pooling
         clean_depth = torch.nan_to_num(depth, nan=0.0, posinf=100.0, neginf=0.0)
         norm_depth = (clean_depth.unsqueeze(1).clamp(0, 100.0) / 100.0).to(x.dtype)
-        log_w = self.feat_attn(torch.cat([x_up, norm_depth], dim=1)) / torch.exp(self.log_temp)  # (B, 1, H, W)
+        logits = self.feat_attn(torch.cat([x_up, norm_depth], dim=1))
+        if depth_quality is not None:
+            # 复现新增：最终权重乘 q，后续仍使用原作者的网格内归一化。
+            logits = logits + self.log_temp.exp() * depth_quality.unsqueeze(1).log()
+        log_w = logits / torch.exp(self.log_temp)  # (B, 1, H, W)
 
         # vertical pooling with weighted average (softmax)
         valid_feat = x_up.permute(0, 2, 3, 1).reshape(-1, C)[valid].float()

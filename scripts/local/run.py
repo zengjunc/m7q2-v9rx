@@ -16,7 +16,7 @@ LOCAL = ROOT / 'scripts/local'
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('command', choices=['download','extract','preprocess','depth','prepare-bevloc','pf','train','cuvslam','superodom','bevloc'])
+    p.add_argument('command', choices=['download','extract','preprocess','depth','check-data','prepare-bevloc','pf','train','cuvslam','superodom','bevloc'])
     default_config = ROOT / 'config/local/project.yaml'
     if not default_config.exists():
         default_config = ROOT / 'config/local/project.example.yaml'
@@ -26,10 +26,18 @@ def main():
     p.add_argument('--output', type=Path)
     p.add_argument('--checkpoint', type=Path, help='Override PF/BEVLoc inference weights for this run')
     p.add_argument('--dry-run', action='store_true')
-    p.add_argument('--mask-invalid-depth', action='store_true', help='PF only: exclude invalid depth from BEV projection')
+    variants = p.add_mutually_exclusive_group()
+    variants.add_argument('--mask-invalid-depth', action='store_true', help='PF only: exclude invalid depth from BEV projection')
+    variants.add_argument('--stereo-pooling', action='store_true', help='PF only: stereo-evidence soft weighting inside BEV pooling')
+    p.add_argument('--stereo-conflict-weight', type=float, default=.25, help='Fixed stereo contradiction factor; 1 for identity check')
+    p.add_argument('--seed', type=int, help='PF only: override the random seed')
     a, extra = p.parse_known_args()
-    if a.mask_invalid_depth and a.command != 'pf':
-        p.error('--mask-invalid-depth is only supported for pf')
+    if not 0 < a.stereo_conflict_weight <= 1:
+        p.error('--stereo-conflict-weight must be in (0, 1]')
+    if (a.stereo_pooling or a.mask_invalid_depth) and a.command != 'pf':
+        p.error('Depth variants are only supported for pf')
+    if a.seed is not None and a.command != 'pf':
+        p.error('--seed is only supported for pf; train uses seed=...')
     if a.checkpoint is not None and a.command not in ['pf', 'bevloc']:
         p.error('--checkpoint is only supported for pf/bevloc; train uses ckpt_path=...')
     if extra and a.command != 'train':
@@ -50,7 +58,10 @@ def main():
     data = loc('processed_root') / scene
     extracted = loc('extracted_root') / scene
     prepared = loc('bevloc_data_root') / scene
-    output = path(a.output) if a.output else loc('output_root') / scene / a.command
+    output_name = a.command
+    if a.command == 'pf':
+        output_name = 'pf_stereo' if a.stereo_pooling else 'pf_masked' if a.mask_invalid_depth else 'pf'
+    output = path(a.output) if a.output else loc('output_root') / scene / output_name
     kind = 'bevloc' if a.command == 'bevloc' else 'cuvslam' if a.command == 'cuvslam' else 'pf'
     python = path(cfg['environments'][kind]) if '/' in cfg['environments'][kind] else cfg['environments'][kind]
     env = os.environ.copy()
@@ -92,6 +103,9 @@ def main():
         commands = [cmd+[str(ROOT/'preprocessing/preprocess_tartandrive.py'),'--src',str(stage),'--dst',str(loc('processed_root'))]]
     elif a.command == 'depth':
         commands = [cmd+[str(LOCAL/'depth.py'),'--scene-dir',str(data)]]
+    elif a.command == 'check-data':
+        commands = [cmd+[str(LOCAL/'check_data.py'),'--scene-dir',str(data),
+                         '--extracted',str(extracted),'--map',str(loc('map')),'--output',str(output)]]
     elif a.command == 'prepare-bevloc':
         commands = [cmd+[str(LOCAL/'prepare_bevloc.py'),'--processed',str(data),'--extracted',str(extracted),
                          '--bags',str(loc('raw_root')/'bags'/scene),'--output',str(prepared)]]
@@ -100,6 +114,8 @@ def main():
                          '--checkpoint',str(path(a.checkpoint) if a.checkpoint else loc('pf_checkpoint')),'--output',str(output)]]
         if a.limit: commands[0] += ['--limit',str(a.limit)]
         if a.mask_invalid_depth: commands[0] += ['--mask-invalid-depth']
+        if a.stereo_pooling: commands[0] += ['--stereo-pooling', '--stereo-conflict-weight', str(a.stereo_conflict_weight)]
+        if a.seed is not None: commands[0] += ['--seed',str(a.seed)]
         commands += [cmd+[str(LOCAL/'evaluate.py'),'--method','pf','--scene-dir',str(data),'--output',str(output)]]
     elif a.command == 'train':
         # Invoke the original training pipeline; only select the TartanDrive dataset/config.

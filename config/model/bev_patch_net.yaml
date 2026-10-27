@@ -14,3 +14,6 @@ gnd_hidden_dim: 128
 aer_hidden_dims: [64, 64, 32]
 out_dim: 32
 dropout: 0.1
+
+# 复现新增：仅屏蔽无效深度，默认关闭；双目软聚合另由sequence.stereo_pooling控制。
+mask_invalid_depth: false

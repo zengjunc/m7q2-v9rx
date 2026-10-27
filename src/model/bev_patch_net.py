@@ -79,25 +79,33 @@ class BEVPatchNet(nn.Module):
         aer_hidden_dims: list[int],
         out_dim: int,
         dropout: float,
+        # 复现适配：加载完整 checkpoint 时可关闭主干联网下载；默认保持原行为。
+        pretrained_backbones: bool = True,
+        mask_invalid_depth: bool = False,
         **kwargs: dict[str, any],
     ) -> None:
         super().__init__()
+        # 复现修复：原训练入口使用 model.name 命名 checkpoint。
+        self.name = kwargs.get("name", "BEV-Patch-Net")
         self.gnd_hidden_dim = gnd_hidden_dim
         self.out_dim = out_dim
 
         # Ground Encoder & BEV Mapper/Encoder
         self.gnd_backbone = DINOv3_ConvNeXt_FeatureExtractor(
-            model_name=gnd_backbone_name, out_indices=gnd_backbone_out_indices, frozen=True
+            model_name=gnd_backbone_name, out_indices=gnd_backbone_out_indices, frozen=True,
+            pretrained=pretrained_backbones,
         )
         self.gnd_upernet = UPerNet(in_channels=self.gnd_backbone.feature_dims, out_dim=gnd_hidden_dim, dropout=dropout)
-        self.bev_mapper = LiftSplatBEVMapper(feat_dim=gnd_hidden_dim, bev_shape=bev_shape)
+        self.bev_mapper = LiftSplatBEVMapper(
+            feat_dim=gnd_hidden_dim, bev_shape=bev_shape, mask_invalid_depth=mask_invalid_depth)
         self.bev_encoder = BevEncoder(
             in_dim=gnd_hidden_dim, hidden_dim=gnd_hidden_dim, out_dim=out_dim + 2, dropout=dropout
         )
 
         # Aerial Encoder
         self.aer_backbone = DINOv3_ConvNeXt_FeatureExtractor(
-            model_name=aer_backbone_name, out_indices=aer_backbone_out_indices, frozen=True
+            model_name=aer_backbone_name, out_indices=aer_backbone_out_indices, frozen=True,
+            pretrained=pretrained_backbones,
         )
         self.aer_decoder = AerialDecoder(
             in_dims=self.aer_backbone.feature_dims, proj_dims=aer_hidden_dims, out_dim=out_dim
@@ -118,7 +126,11 @@ class BEVPatchNet(nn.Module):
     ):
         # 1) BEV feature from ground view
         gnd_emb = self.gnd_upernet(self.gnd_backbone(ground_image))
-        bev_emb, bev_mask = self.bev_mapper(gnd_emb, ground_depth, info["K"], info["cam2enu"], info["resolution"])
+        # 复现新增：可选双目权重由序列提供；缺省时保留原版聚合。
+        bev_emb, bev_mask = self.bev_mapper(
+            gnd_emb, ground_depth, info["K"], info["cam2enu"], info["resolution"],
+            depth_quality=info.get("depth_quality"),
+        )
         bev_raw_feat = self.bev_encoder(bev_emb)
 
         # 2) Aerial feature

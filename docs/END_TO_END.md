@@ -84,7 +84,7 @@ python scripts/local/run.py train --output output/train/check \
 python scripts/local/run.py train --output output/train/tartandrive epochs=5 batch_size=4
 ```
 
-统一配置使用 `amp=False`。若从公开模型参数初始化，可加 `ckpt_path=weights/BEV-Patch-Net_e4_3.85.pth`；该参数不恢复完整训练进度和优化器状态。`pf_checkpoint` 只控制推理，不自动作为训练初始化。
+统一配置使用 `amp=False`。若从公开模型参数初始化，可加 `ckpt_path=weights/BEV-Patch-Net_e4_3.85.pth`；可同时加 `+model.pretrained_backbones=false` 避免重复下载主干权重；该参数不恢复完整训练进度和优化器状态。`pf_checkpoint` 只控制推理，不自动作为训练初始化。
 
 每轮自动网络验证并保存 `.pth`、`val_e*_metrics.json` 与特征图。recall@k 表示检索正确率，z_sep 表示正负候选的分数分离，均不是车辆轨迹误差。根据 val 选择权重，再到 test 轨迹进行 PF 评估。目前尚未完成正式完整划分训练。
 
@@ -116,7 +116,7 @@ python scripts/local/run.py pf --checkpoint output/train/tartandrive/实际权�
 
 ## 5. 评估约定
 
-结果默认写入 `output/local/<scene>/<method>/`。重复使用同名目录会替换对应结果。
+结果默认写入 `output/local/<scene>/<method>/`。PF原版、仅屏蔽和软聚合分别使用 `pf/`、`pf_masked/`、`pf_stereo/`。重复使用同名目录会替换对应结果。
 
 | 方法 | 轨迹输出 | 运动/参考使用 |
 |---|---|---|
@@ -137,4 +137,65 @@ BEVLoc 当前保留每批参考朝向、每 5 批参考位置 prior，以及参�
 python scripts/local/run.py pf --mask-invalid-depth --output output/pf_masked
 ```
 
-实现位于复现入口 scripts/local/pf.py 适配器，不改官方模型源码。比较时固定地图、权重、输入序列和 VO，使用不同输出目录。
+实现位于 `src/model/bev_mapper.py` 的可选分支，原模型配置为 `model.mask_invalid_depth`（默认false），复现入口负责传入开关。比较时固定地图、权重、输入序列和 VO。PF 可用 `--seed 42` 指定随机种子；对照使用相同种子。
+
+
+## 7. 数据质量检查
+
+先完成场景预处理、SGBM 和 cuVSLAM，再执行：
+
+```bash
+python scripts/local/run.py check-data --scene SCENE_NAME
+```
+
+工具 `scripts/local/check_data.py` 仅适配当前 TartanDrive 校正相机（1024×544），不修改输入。默认输出为 `output/local/<scene>/check-data/`：
+
+| 文件 | 内容 |
+|---|---|
+| REPORT.md | 各步骤的 pass/review/fail 与处理建议 |
+| frames.csv | 每帧时间间隔、清晰度、曝光、有效深度比例、同步差、VO状态及问题 |
+| summary.json | 阈值、检查状态、分布统计和问题计数 |
+| quality.png | 时间间隔、清晰度、有效深度比例与相机时间差曲线 |
+
+直接调用检查器时，结构或数值无效退出码为 2，报告仍会保存；统一入口会相应报错并以非零状态停止。仅存在质量疑点时退出码为 0，标记 review。此处“合格”只表示通过已实现的检查，不保证深度或定位准确。
+
+检查过程：
+
+1. 核对四路 PNG 文件名/数量、时间戳和参考/VO对应，检查图像尺寸、深度 uint16 毫米格式和位姿数值。
+2. 分开统计原始相机消息与处理后序列的真实帧间隔，超过各自中位数 1.5 倍时标记长间隔。原始缺口可能已被预处理裁掉，因此不能用处理后近似等间隔证明原始消息没有缺口，也不能仅凭日志断定是传感器漏采。
+3. 若提取目录可用，按原作者规则重建相机配对，逐帧核对三路图像字节一致后，比较原始 header 时间。无法核实来源时标记 unknown，不把“同名”当成同步证明。
+4. 在固定512像素宽度上计算灰度拉普拉斯方差，初始阈值40；极暗/极亮像素占比超过0.5时提示曝光问题。
+5. 检查深度有效范围0.1–65.5米，0为无效；有效比例低于0.25时提示复查。整帧无有效深度为不可直接使用的观测。
+6. 检查VO四元数、时间对应、跟踪状态和运动跳变；超过25m/s仅提示核查，不能直接认为是真实错误。地图检查仅使用参考位置核查覆盖，不以定位误差选帧。
+
+阈值是可调整的启发式，不是通用质量标准。需要调整时直接调用工具，例如：
+
+```bash
+.env-unified/bin/python scripts/local/check_data.py \
+  --scene-dir data/TartanDrive2/SCENE_NAME \
+  --extracted data/extracted/SCENE_NAME \
+  --map data/maps/gascola_26917_03.tif \
+  --output output/quality/SCENE_NAME \
+  --min-sharpness 40 --min-depth-fraction 0.25 \
+  --max-sync-ms 5 --max-gap-factor 1.5
+```
+
+先根据报告核实问题，再选择重新配对、重新生成深度/VO，或调整观测权重。当前工具没有实现自动修复或自适应PF。
+
+若后续采用自适应视觉更新，应保留每个时刻的VO预测和评估输出，只根据质量选择地图观测更新时刻。真正跨过多个输入帧时，需要正确组合相对位姿；不能只取最后一步动作，也不能把位姿分量直接相加。第一版优先保持逐帧运动传播，避免改变VO序列。
+
+
+## 8. 双目一致性软聚合
+
+当前整理后的可选改进，直接使用公开权重：
+
+```bash
+# 原版
+python scripts/local/run.py pf --scene SCENE_NAME --seed 42 --output output/pf_original
+# 双目软聚合
+python scripts/local/run.py pf --scene SCENE_NAME --stereo-pooling --seed 42 --output output/pf_stereo
+```
+
+只需增加 `--stereo-pooling`。它在原BEV聚合内降低双目矛盾像素的贡献，包含无效深度屏蔽，不直接修改匹配或PF公式。配置对应 `sequence.stereo_pooling`（默认false）和 `sequence.stereo_conflict_weight`（默认0.25）；训练流程保持原设置。
+
+处理后的场景需有同名配对的left/right/depth。首次计算的矛盾掩码缓存在场景的stereo_conflict目录；更换图像、深度或一致性规则后删除该缓存目录即可重算。默认仅输出常规轨迹和评估结果。原理、代码路径和已完成结果统一见 [双目软聚合说明](DEPTH_RELIABILITY.md)。

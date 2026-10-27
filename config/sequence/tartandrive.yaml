@@ -8,6 +8,10 @@ geo_tiff_path: ${.root}/gascola_EPSG32617_scale03_082725.tiff
 ground_image_resize: [512, 512]
 aerial_image_resize: [768, 768]
 
+# 复现新增：双目软聚合；默认关闭，开启时排除无效深度，左右矛盾像素权重为0.25。
+stereo_pooling: false
+stereo_conflict_weight: 0.25
+
 scenes:
   # Seen routes
   - 2023-11-14-14-52-22_gupta

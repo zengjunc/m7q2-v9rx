@@ -1,4 +1,4 @@
-# 复现适配：加载公开权重并调用原作者 PF 循环；提供无界面运行及默认关闭的无效深度屏蔽。
+# 复现适配：加载公开权重并调用原作者 PF 循环；可选无效深度屏蔽或双目软聚合。
 """LOCAL ADDITION: headless upstream PF adapter with optional invalid-depth masking."""
 import argparse
 import json
@@ -16,10 +16,18 @@ def main():
     p.add_argument('--checkpoint', required=True, type=Path)
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--limit', type=int)
-    p.add_argument('--mask-invalid-depth', action='store_true', help='Exclude nonpositive/nonfinite depth from BEV geometry')
+    p.add_argument('--seed', type=int, help='Override the PF random seed for paired comparisons')
+    variants = p.add_mutually_exclusive_group()
+    variants.add_argument('--mask-invalid-depth', action='store_true', help='Exclude nonpositive/nonfinite depth from BEV geometry')
+    variants.add_argument('--stereo-pooling', action='store_true', help='Soft-weight LR contradictions inside BEV pooling; includes valid-depth geometry')
+    p.add_argument('--stereo-conflict-weight', type=float, default=.25, help='Fixed contradiction factor; 1 is the identity control')
     a = p.parse_args()
+    if not 0 < a.stereo_conflict_weight <= 1:
+        p.error('--stereo-conflict-weight must be in (0, 1]')
     if a.limit is not None and a.limit < 1:
         p.error('--limit must be positive')
+    if a.seed is not None and not 0 <= a.seed < 2**32:
+        p.error('--seed must be between 0 and 2**32-1')
     import hydra
     import timm
     import torch
@@ -37,8 +45,13 @@ def main():
     cfg.sequence.root = str(a.scene_dir.resolve().parent)
     cfg.sequence.scenes = [a.scene_dir.name]
     cfg.sequence.geo_tiff_path = str(a.map.resolve())
+    cfg.sequence.stereo_pooling = a.stereo_pooling
+    cfg.sequence.stereo_conflict_weight = a.stereo_conflict_weight
+    cfg.model.mask_invalid_depth = a.mask_invalid_depth
     cfg.ckpt_path = str(a.checkpoint.resolve())
     cfg.output_dir = str(a.output.resolve())
+    if a.seed is not None:
+        cfg.seed = a.seed
     seed_everything(cfg.seed)
     # The provided checkpoint contains both backbones: no secondary network download.
     create_model = timm.create_model
@@ -50,16 +63,6 @@ def main():
         model = load_model(cfg.model, cfg.ckpt_path, device='cuda', strict_model=True, eval_mode=True)
     finally:
         timm.create_model = create_model
-    if a.mask_invalid_depth:
-        from model.bev_mapper import LiftSplatBEVMapper
-        for module in model.modules():
-            if isinstance(module, LiftSplatBEVMapper):
-                original_geometry = module.compute_geometry
-                def masked_geometry(depth, K, cam2enu, resolution, original=original_geometry):
-                    valid, indices = original(depth, K, cam2enu, resolution)
-                    good = (torch.isfinite(depth) & (depth > 0)).reshape(-1)
-                    return valid & good, indices[good[valid]]
-                module.compute_geometry = masked_geometry
     pf = ParticleFilter(model, **cfg.run)
     loader = upstream.create_sequence_loader(cfg, pf, a.scene_dir.name)
     if a.limit:
@@ -74,7 +77,9 @@ def main():
     # No copy of the prediction algorithm: execute the original implementation.
     upstream.run_pf(pf, loader, a.output, cfg)
     (a.output / 'run_options.json').write_text(json.dumps({
-        'mask_invalid_depth': a.mask_invalid_depth,
+        'mask_invalid_depth': a.stereo_pooling or a.mask_invalid_depth,
+        'stereo_pooling': a.stereo_pooling,
+        'stereo_conflict_weight': a.stereo_conflict_weight if a.stereo_pooling else None,
         'seed': int(cfg.seed),
     }, indent=2) + '\n')
     print(f'Saved upstream PF output: {a.output / "pf_traj.csv"}')

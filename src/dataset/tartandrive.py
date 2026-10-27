@@ -56,8 +56,14 @@ class TartanDriveDataset(GeoLocDataset):
 
 
 class TartanDriveSequence(TartanDriveDataset):
-    def __init__(self, root: str, scene: str, **kwargs):
+    def __init__(self, root: str, scene: str, stereo_pooling: bool = False,
+                 stereo_conflict_weight: float = .25, **kwargs):
         super().__init__(root, scene, **kwargs)
+        # 复现新增：可选双目软聚合；关闭时不读取左右图像或质量缓存。
+        self.stereo_pooling = stereo_pooling
+        self.stereo_conflict_weight = stereo_conflict_weight
+        if not 0 < stereo_conflict_weight <= 1:
+            raise ValueError('stereo_conflict_weight must be in (0, 1]')
 
         # Motion updates from camera-frame visual odometry.
         odom_path = Path(root) / scene / "pycuvslam.csv"
@@ -67,5 +73,9 @@ class TartanDriveSequence(TartanDriveDataset):
 
     def __getitem__(self, idx):
         data = super().__getitem__(idx)
+        if self.stereo_pooling:
+            from dataset.stereo import load_depth_quality
+            data['info']['depth_quality'] = load_depth_quality(
+                self.depth_paths[idx], data['ground_depth'].shape, self.stereo_conflict_weight)
         data.update({"timestamp": self.poses[idx, 0], "action": self.actions[idx]})
         return data
