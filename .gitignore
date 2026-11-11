@@ -207,6 +207,7 @@ paper_scripts/figure/
 paper_scripts/output/
 paper_scripts/pf_results/
 *.png
+!/docs/assets/*.png
 
 wandb/
 test/

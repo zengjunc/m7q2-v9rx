@@ -199,3 +199,19 @@ python scripts/local/run.py pf --scene SCENE_NAME --stereo-pooling --seed 42 --o
 只需增加 `--stereo-pooling`。它在原BEV聚合内降低双目矛盾像素的贡献，包含无效深度屏蔽，不直接修改匹配或PF公式。配置对应 `sequence.stereo_pooling`（默认false）和 `sequence.stereo_conflict_weight`（默认0.25）；训练流程保持原设置。
 
 处理后的场景需有同名配对的left/right/depth。首次计算的矛盾掩码缓存在场景的stereo_conflict目录；更换图像、深度或一致性规则后删除该缓存目录即可重算。默认仅输出常规轨迹和评估结果。原理、代码路径和已完成结果统一见 [双目软聚合说明](DEPTH_RELIABILITY.md)。
+
+## 9. 短窗口位置修正
+
+先记录原 PF 的候选、权重和运动，再在 CPU 上修正输出轨迹：
+
+```bash
+export LD_LIBRARY_PATH="$PWD/.env-unified/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+python scripts/local/record_pf_candidates.py \
+  --scene SCENE_NAME --seed 42 --output output/pf_record
+python scripts/local/window_refine.py \
+  --record output/pf_record/candidates.npz --output output/pf_window
+```
+
+默认等待后续5帧，在运动异常或粒子均值支持不足的时刻附近启用修正，每帧最多改动0.5米。它只处理输出位置，不反馈给PF，也不改航向。记录器支持 `--stereo-pooling`，当前短窗口实验使用原版观测，未将两个独立实验的收益合并报告。
+
+输出包括 `refined_traj.csv`、`diagnostics.csv` 和配对 `metrics.json`。方法、批量对照与测试见 [短窗口说明](WINDOW_REFINE.md)，逐轨迹与多种子结果见 [实验结果](WINDOW_RESULTS.md)。

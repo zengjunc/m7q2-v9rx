@@ -69,3 +69,9 @@ PF 对空间特征和候选位姿逐网格打分，BEVLoc 对多帧表示做粗�
 5. `src/model/bev_mapper.py`：将原聚合权重乘q，再按原方式归一化。
 
 没有新增可学习参数，也不再运行时替换模型函数。完整使用和结果见 [双目软聚合](DEPTH_RELIABILITY.md)。
+
+## 短窗口位置修正
+
+`scripts/local/record_pf_candidates.py` 调用原PF并记录候选；`scripts/local/window_refine.py` 依次执行后验权重读取、粒子分布与运动诊断、窗口位置求解和配对评价。原PF主循环不变，修正结果不回写粒子。
+
+先读 `analyze()` 看触发条件，再读 `smooth_window()` 的位置/运动约束，最后读 `refine()` 的有限延迟输出与修正上限。`experiment_window_refine.py` 批量运行固定设置，`test_window_refine.py` 检查正常转弯、有限未来依赖和记录器不变性。详见 [方法说明](WINDOW_REFINE.md) 与 [实验结果](WINDOW_RESULTS.md)。
