@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # Create argument parser
     torch.cuda.empty_cache()
     parser = argparse.ArgumentParser("TartanDrive Trainer", None, "TartanDriver Trainer for BEVLoc")
-    parser.add_argument("-s", "--settings", default="aeromatch/config/predator.json")
+    parser.add_argument("-s", "--settings", required=True, help="Evaluation settings JSON")
     parser.add_argument("-c", "--checkpoint", required=True,
                         help="Pretrained checkpoint matching the settings architecture")
     parser.add_argument("--trajectory", help="Evaluate this single prepared trajectory")

@@ -7,7 +7,8 @@
     "source": "local bevloc-main working snapshot",
     "snapshot_date": "2026-10-09",
     "commit": null,
-    "modified": true
+    "modified": true,
+    "scope": "TartanDrive2 training/evaluation; legacy unused modules and machine-specific configs removed"
   },
   "tartandrive": {
     "source": "https://github.com/castacks/tartan_drive_2.0",

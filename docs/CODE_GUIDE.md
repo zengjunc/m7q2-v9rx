@@ -30,7 +30,7 @@ cuVSLAM 动作 → predict → update → resample → 加权位姿
 
 ## BEVLoc 主线
 
-代码位于 third_party/bevloc：
+代码位于 `third_party/bevloc`，保留 TartanDrive2 的训练和推理主线：
 
 ```text
 连续 8 帧 RGB/深度 + TartanVO 位姿
@@ -44,6 +44,8 @@ cuVSLAM 动作 → predict → update → resample → 加权位姿
 依次看 aeromatch/eval/eval_tartan_drive.py、models/bev_loc.py::test_step、data/load_tartandrive2_dataset.py、utils/local_odom.py、models/ground_networks.py、utils/aerial_processing.py、models/aerial_networks.py、matching/matcher.py，最后 state_estimation/factor_graphs.py。
 
 PF 对空间特征和候选位姿逐网格打分，BEVLoc 对多帧表示做粗细检索；PF 维护粒子分布，BEVLoc 用因子图优化运动与位置约束。BEVLoc 的 batch 在当前配置中还是时序窗口，不能乱序测试图像。
+
+当前流程使用 TartanVO 运动与因子图，不执行 IMU 预积分。旧 IMUProcessor、旧版数据加载器及机器专用配置已移除；原生训练和评估入口通过 `--settings` 显式指定设置文件。
 
 ## 其他数据的职责
 
@@ -68,10 +70,16 @@ PF 对空间特征和候选位姿逐网格打分，BEVLoc 对多帧表示做粗�
 4. `src/model/bev_patch_net.py`：把可选q交给mapper。
 5. `src/model/bev_mapper.py`：将原聚合权重乘q，再按原方式归一化。
 
-没有新增可学习参数，也不再运行时替换模型函数。完整使用和结果见 [双目软聚合](DEPTH_RELIABILITY.md)。
+没有新增可学习参数，也不再运行时替换模型函数。方法与使用见 [双目软聚合](DEPTH_RELIABILITY.md)。
 
 ## 短窗口位置修正
 
 `scripts/local/record_pf_candidates.py` 调用原PF并记录候选；`scripts/local/window_refine.py` 依次执行后验权重读取、粒子分布与运动诊断、窗口位置求解和配对评价。原PF主循环不变，修正结果不回写粒子。
 
-先读 `analyze()` 看触发条件，再读 `smooth_window()` 的位置/运动约束，最后读 `refine()` 的有限延迟输出与修正上限。`experiment_window_refine.py` 批量运行固定设置，`test_window_refine.py` 检查正常转弯、有限未来依赖和记录器不变性。详见 [方法说明](WINDOW_REFINE.md) 与 [实验结果](WINDOW_RESULTS.md)。
+地图使用原作者 EPSG:32617、0.3m/px GeoTIFF。`scripts/local/prepare_map.py` 下载与核验地图，并为 BEVLoc 生成引用同一图像的 VRT。
+
+先读 `analyze()` 看触发条件，再读 `smooth_window()` 的位置/运动约束，最后读 `refine()` 的有限延迟输出与修正上限。`experiment_window_refine.py` 批量运行固定设置，`test_window_refine.py` 检查正常转弯、有限未来依赖和记录器不变性。详见 [方法说明](WINDOW_REFINE.md)。
+
+## 四组独立对照入口
+
+`scripts/local/compare_variants.py` 组织 base、valid_depth、stereo、window 四组。先记录原版base，再运行两个深度变体，最后使用同一base记录进行短窗口修正。它负责批量调度、绘图和指标汇总，不修改网络或PF公式。

@@ -1,4 +1,5 @@
 # Third Party
+from osgeo import gdal  # Load GDAL's libjpeg before Pillow/torchvision.
 import argparse
 import os
 from torch.utils.data import DataLoader
@@ -18,7 +19,7 @@ if __name__ == "__main__":
 
     # Create argument parser
     parser = argparse.ArgumentParser("TartanDrive Trainer", None, "TartanDriver Trainer for BEVLoc")
-    parser.add_argument("-s", "--settings", default="aeromatch/config/tartandrive_settings_lowmem.json")
+    parser.add_argument("-s", "--settings", required=True, help="Training settings JSON")
     args = parser.parse_args()
 
     # Get settings for dataset

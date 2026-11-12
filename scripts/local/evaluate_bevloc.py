@@ -31,13 +31,19 @@ def evaluate(run, input_frames):
               "mean_m": float(error.mean()), "median_m": float(np.median(error)),
               "final_m": float(error[-1]), "max_m": float(error.max()),
               "reference": "bag /odom, synchronized by official loader",
-              "frame": "EPSG:26917 map frame, paired estimated/reference positions",
+              "frame": "projected map frame, paired estimated/reference positions",
               "sampling": "one output per batch (8 input images; final batch may be shorter)",
               "alignment": "none: direct paired absolute position error",
               "position_assistance": "official closed_loop prior reset every 5 batches",
               "heading_assistance": "official reference yaw each batch",
         "matching_gate": "official reference pixel-error gate rmse < 300",
               "prediction_csv": str(predicted[0]), "reference_csv": str(reference[0])}
+    settings_file = run / "settings.json"
+    if settings_file.exists():
+        import rasterio
+        settings = json.loads(settings_file.read_text())
+        with rasterio.open(settings["map_file"]) as source:
+            report["frame"] = f"{source.crs} map frame, paired estimated/reference positions"
     (run / "metrics.json").write_text(json.dumps(report, indent=2) + "\n")
     np.savetxt(run / "position_errors.csv", np.column_stack([pred[:, 0], error]),
                delimiter=",", header="timestamp,error_m", comments="", fmt="%.9f")

@@ -49,13 +49,15 @@ LD_LIBRARY_PATH="$PWD/.env-unified/lib:$CUDA_HOME/lib64${LD_LIBRARY_PATH:+:$LD_L
 
 ```bash
 conda activate ./.env-unified
+export LD_LIBRARY_PATH="$PWD/.env-unified/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export PROJ_DATA="$PWD/.env-unified/share/proj"
 python scripts/local/run.py pf --limit 10 --output output/check/pf
 python scripts/local/run.py bevloc --limit 2 --output output/check/bevloc
 python scripts/local/run.py cuvslam --limit 10 --output output/check/cuvslam
 python scripts/local/run.py superodom --output output/check/superodom
 ```
 
-先按 [全流程手册](END_TO_END.md) 准备数据、地图和公开权重。统一入口自动设置动态库和源码路径；若直接导入 manifpy 出现 CXXABI 错误，可设置 `LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"`。
+先按 [全流程手册](END_TO_END.md) 准备数据、地图和公开权重。统一入口自动设置动态库和源码路径；若直接导入 manifpy 出现 CXXABI 错误，可设置 `LD_LIBRARY_PATH="$PWD/.env-unified/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"`。
 
 `requirements/locks/` 保存安装版本快照，供精确复现和排错使用，不需要与普通安装清单重复安装。Linux x86-64 可用其中 explicit Conda 文件替代 YAML 创建环境：
 
@@ -64,3 +66,7 @@ conda create -p ./.env-unified --file requirements/locks/unified-conda-linux-64.
 ```
 
 运行四种方法不代表运行原 ROS2 SuperOdom 工程：该 baseline 使用数据集预计算轨迹。
+
+## BEVLoc 原生入口
+
+第三方目录只保留当前需要的训练/推理代码，依赖使用上述统一环境。训练与评估均要求显式传入 `--settings`；统一启动器会根据 `config/local/bevloc.json` 生成本次推理设置并传入。IMU预积分模块已移除，运动来源仍为TartanVO。

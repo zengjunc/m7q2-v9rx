@@ -11,9 +11,9 @@ paths:
   extracted_root: data/extracted
   processed_root: data/TartanDrive2
   bevloc_data_root: data/bevloc
-  map: data/maps/gascola_26917_03.tif
-  bevloc_map: data/maps/gascola_26917_03.tif
-  bevloc_vrt: data/maps/gascola_26917_03.vrt
+  map: data/maps/gascola_EPSG32617_scale03_082725.tiff
+  bevloc_map: data/maps/gascola_EPSG32617_scale03_082725.tiff
+  bevloc_vrt: data/maps/gascola_EPSG32617_scale03_082725.vrt
   pf_checkpoint: weights/BEV-Patch-Net_e4_3.85.pth
   bevloc_checkpoint: weights/bevloc-b=8-g=resnet101-a=resnet101-5.ckpt
   output_root: output/local

@@ -29,7 +29,6 @@ from aeromatch.utils.local_odom import LocalOdomWrapper
 from aeromatch.utils.mining import mine_labels_corr, mine_labels_within_batch
 from aeromatch.utils.visualization import create_corr_heatmap, overlay_localization, visualize_coarse_result, visualize_fine_result
 from state_estimation.factor_graphs import SE3VOFactorGraph, BEVLocFactorGraph
-from state_estimation.imu_processor import IMUProcessor
 
 class BEVLoc(pl.LightningModule):
     def __init__(self, tartan_drive_settings):
@@ -221,10 +220,7 @@ class BEVLoc(pl.LightningModule):
         img_scale = img_scale.to(self.device)
         depth_img = depth_img.to(self.device)
 
-        # Process imu measurements
-        # The VO-based BEV model does not consume IMU preintegration outputs.
-        # Keep IMU data in the batch for timestamps; do not instantiate the
-        # unfinished IMUProcessor API here.
+        # IMU timestamps remain in the batch; motion comes from VO.
 
         # Prior location and yaw according to ground truth
         self.aero_bev.set_prior_loc_gps(odom[-1, :2].cpu().detach().numpy())

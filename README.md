@@ -21,6 +21,10 @@ cuVSLAM 相对运动 → 粒子运动预测
 ```bash
 conda activate ./.env-unified
 
+# 下载原作者地图并生成 BEVLoc 所需 VRT。
+export LD_LIBRARY_PATH="$PWD/.env-unified/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+python scripts/local/prepare_map.py --download
+
 # 检查已处理轨迹的同步、图像、深度和里程计。
 python scripts/local/run.py check-data
 

@@ -2,7 +2,7 @@
 experiment_name: tartandrive_split_footprint
 
 root: data/TartanDrive2
-geotiff: ${root}/gascola_EPSG32617_scale03_082725.tiff
+geotiff: data/maps/gascola_EPSG32617_scale03_082725.tiff
 
 pose:
   default_file: odom.csv

@@ -1,4 +1,4 @@
-# 复现流程：数据、训练与推理
+# 数据准备、训练与运行
 
 本流程用于运行原作者方法及接入的 baseline。所有命令在仓库根目录运行。先按 [UNIFIED_ENV.md](UNIFIED_ENV.md) 安装 `.env-unified`，再执行 `conda activate ./.env-unified`。
 
@@ -18,15 +18,39 @@ cp config/local/project.example.yaml config/local/project.yaml
 | extracted_root | data/extracted |
 | processed_root | data/TartanDrive2 |
 | bevloc_data_root | data/bevloc |
-| map / bevloc_map | data/maps/gascola_26917_03.tif |
-| bevloc_vrt | data/maps/gascola_26917_03.vrt |
+| map / bevloc_map | data/maps/gascola_EPSG32617_scale03_082725.tiff |
+| bevloc_vrt | data/maps/gascola_EPSG32617_scale03_082725.vrt |
 | pf_checkpoint | weights/BEV-Patch-Net_e4_3.85.pth |
 | bevloc_checkpoint | weights/bevloc-b=8-g=resnet101-a=resnet101-5.ckpt |
 | output_root | output/local |
 
-地图需要有效的 GeoTIFF 地理信息并覆盖轨迹。当前两种地图定位方法共用 EPSG:26917、0.3 m/px 地图，由现有 gascola.tif 重采样得到；它不是作者配置中的 EPSG:32617 原图。不要只修改分辨率数值或 CRS 标签。地图和权重单独准备，原始下载来源见 [上游说明](UPSTREAM_README.md)。
+PF 与 BEVLoc 共用原作者发布的 EPSG:32617、0.3 m/px GeoTIFF，来源为 [TartanDrive2 补充数据](https://web.corral.tacc.utexas.edu/texasrobotics/web_UT-SARA-GQ/supplementary/TartanDrive2/)。下载并生成 BEVLoc 所需的同源 VRT：
+
+```bash
+export LD_LIBRARY_PATH="$PWD/.env-unified/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+python scripts/local/prepare_map.py --download
+```
+
+工具核对 CRS 与分辨率，并保存范围、图像大小及 SHA256。VRT 引用同一张 TIFF，不进行重采样。地图与权重不进入 Git。已有地图可不加 `--download`，只核验并重建 VRT。
+
+若本机已有不入Git的 `config/local/project.yaml`，同步表中的 `map`、`bevloc_map`、`bevloc_vrt` 三个字段；更新模板不会覆盖已有本机配置。
+
+运行配置统一使用上述原作者地图。
 
 ## 2. 按轨迹准备数据
+
+数据按处理阶段组织：
+
+| 目录 | 保存内容 | 用途 |
+| --- | --- | --- |
+| `data/raw/bags/<scene>/` | 下载的原始 bag；`.part` 是未完成文件 | 提取消息及首次准备 BEVLoc 的 IMU |
+| `data/extracted/<scene>/` | 原始图像、各相机时间戳、参考/TartanVO/LiDAR 里程计 | 重新同步、预处理、BEVLoc 适配和 Super Odometry 评价 |
+| `data/TartanDrive2/<scene>/` | 同步整理后的图像、毫米深度、参考位姿与 cuVSLAM 位姿 | PF 训练与推理的正式输入 |
+| `data/bevloc/<scene>/` | BEVLoc 格式的图像、深度、参考、TartanVO 与 IMU | BEVLoc 运行输入 |
+| `data/maps/` | 原作者 GeoTIFF、同源 VRT 与校验信息 | 两种地图定位方法共用 |
+
+正式数据使用 `data/TartanDrive2`，不另设同步过滤版本。图像同步属于预处理；无效深度屏蔽属于 BEV 投影，两者不同。
+
 
 ```bash
 scene=2023-11-02-16-00-43_down_meadows
@@ -64,6 +88,10 @@ data/TartanDrive2/<scene>/
 
 图像编号、时间戳、参考位姿与 VO 行数需要对应。深度加载后毫米转换为米；深度和 VO 均不作为参考真值。训练需要 RGB、深度、参考和地图；PF 连续推理还需要完整 VO。
 
+BEVLoc 适配后的目录包括 `image_left_color/`、`depth_left/`、`gps_odom/`、`tartanvo_odom/`、`novatel_imu/`。图像和深度采用硬链接；`gps_odom` 保存数据集参考，不是新采集的实时GPS。IMU 数据供加载器组织时间信息，当前模型使用 TartanVO 运动，不执行 IMU 预积分。
+
+首次执行 `prepare-bevloc` 需要原始 bag 中的 Novatel IMU；确认所需数据完成提取和适配后再清理原始 bag。`extracted` 中的参考、TartanVO、LiDAR 里程计仍有用途，应保留。
+
 ## 3. BEV-Patch-PF 训练和验证
 
 训练入口为官方 `src/train.py`，使用复现用单数据集配置 `config/train_tartandrive.yaml`，保留官方网络、损失和优化流程。训练前准备 `config/dataset/tartandrive.yaml` 指定的 train/val 场景。
@@ -86,9 +114,9 @@ python scripts/local/run.py train --output output/train/tartandrive epochs=5 bat
 
 统一配置使用 `amp=False`。若从公开模型参数初始化，可加 `ckpt_path=weights/BEV-Patch-Net_e4_3.85.pth`；可同时加 `+model.pretrained_backbones=false` 避免重复下载主干权重；该参数不恢复完整训练进度和优化器状态。`pf_checkpoint` 只控制推理，不自动作为训练初始化。
 
-每轮自动网络验证并保存 `.pth`、`val_e*_metrics.json` 与特征图。recall@k 表示检索正确率，z_sep 表示正负候选的分数分离，均不是车辆轨迹误差。根据 val 选择权重，再到 test 轨迹进行 PF 评估。目前尚未完成正式完整划分训练。
+每轮自动网络验证并保存 `.pth`、`val_e*_metrics.json` 与特征图。recall@k 表示检索正确率，z_sep 表示正负候选的分数分离，均不是车辆轨迹误差。根据 val 选择权重，再到 test 轨迹进行 PF 评估。
 
-## 4. 四种方法推理
+## 4. 四种定位方法推理
 
 ```bash
 python scripts/local/run.py pf
@@ -129,7 +157,7 @@ python scripts/local/run.py pf --checkpoint output/train/tartandrive/实际权�
 
 BEVLoc 当前保留每批参考朝向、每 5 批参考位置 prior，以及参考匹配像素误差参与的因子筛选；每批输出与 PF 逐帧输出不同。日志的像素 RMSE 与米制位置 RMSE 不同。对比应记录实际有效位置数与参考辅助方式。
 
-## 6. 小改进：无效深度屏蔽
+## 6. 无效深度屏蔽
 
 默认 PF 调用官方行为。仅在显式启用时，排除 BEV 投影中非正、非有限深度：
 
@@ -174,16 +202,13 @@ python scripts/local/run.py check-data --scene SCENE_NAME
 .env-unified/bin/python scripts/local/check_data.py \
   --scene-dir data/TartanDrive2/SCENE_NAME \
   --extracted data/extracted/SCENE_NAME \
-  --map data/maps/gascola_26917_03.tif \
+  --map data/maps/gascola_EPSG32617_scale03_082725.tiff \
   --output output/quality/SCENE_NAME \
   --min-sharpness 40 --min-depth-fraction 0.25 \
   --max-sync-ms 5 --max-gap-factor 1.5
 ```
 
 先根据报告核实问题，再选择重新配对、重新生成深度/VO，或调整观测权重。当前工具没有实现自动修复或自适应PF。
-
-若后续采用自适应视觉更新，应保留每个时刻的VO预测和评估输出，只根据质量选择地图观测更新时刻。真正跨过多个输入帧时，需要正确组合相对位姿；不能只取最后一步动作，也不能把位姿分量直接相加。第一版优先保持逐帧运动传播，避免改变VO序列。
-
 
 ## 8. 双目一致性软聚合
 
@@ -198,7 +223,7 @@ python scripts/local/run.py pf --scene SCENE_NAME --stereo-pooling --seed 42 --o
 
 只需增加 `--stereo-pooling`。它在原BEV聚合内降低双目矛盾像素的贡献，包含无效深度屏蔽，不直接修改匹配或PF公式。配置对应 `sequence.stereo_pooling`（默认false）和 `sequence.stereo_conflict_weight`（默认0.25）；训练流程保持原设置。
 
-处理后的场景需有同名配对的left/right/depth。首次计算的矛盾掩码缓存在场景的stereo_conflict目录；更换图像、深度或一致性规则后删除该缓存目录即可重算。默认仅输出常规轨迹和评估结果。原理、代码路径和已完成结果统一见 [双目软聚合说明](DEPTH_RELIABILITY.md)。
+处理后的场景需有同名配对的left/right/depth。首次计算的矛盾掩码缓存在场景的stereo_conflict目录；更换图像、深度或一致性规则后删除该缓存目录即可重算。默认仅输出常规轨迹和评估结果。原理与代码路径见 [双目软聚合说明](DEPTH_RELIABILITY.md)。
 
 ## 9. 短窗口位置修正
 
@@ -212,6 +237,35 @@ python scripts/local/window_refine.py \
   --record output/pf_record/candidates.npz --output output/pf_window
 ```
 
-默认等待后续5帧，在运动异常或粒子均值支持不足的时刻附近启用修正，每帧最多改动0.5米。它只处理输出位置，不反馈给PF，也不改航向。记录器支持 `--stereo-pooling`，当前短窗口实验使用原版观测，未将两个独立实验的收益合并报告。
+默认等待后续5帧，在运动异常或粒子均值支持不足的时刻附近启用修正，每帧最多改动0.5米。它只处理输出位置，不反馈给PF，也不改航向。记录器也支持深度变体；当前四组独立对照中的短窗口组使用原版base记录。
 
-输出包括 `refined_traj.csv`、`diagnostics.csv` 和配对 `metrics.json`。方法、批量对照与测试见 [短窗口说明](WINDOW_REFINE.md)，逐轨迹与多种子结果见 [实验结果](WINDOW_RESULTS.md)。
+输出包括 `refined_traj.csv`、`diagnostics.csv` 和配对 `metrics.json`。方法、批量对照与测试见 [短窗口说明](WINDOW_REFINE.md)。
+
+## 10. 四组独立改进对照
+
+此处“四组”是同一 PF 的变体，与前面“四种定位方法”不同：
+
+| 输出名 | 设置 |
+| --- | --- |
+| `base` | 原版PF，保存候选与权重 |
+| `valid_depth` | base＋无效深度屏蔽 |
+| `stereo` | base＋双目软聚合，内部包含无效深度屏蔽 |
+| `window` | 原版base输出＋短窗口位置修正 |
+
+四组使用同一地图、权重、完整输入序列和随机种子。短窗口组独立使用base候选，默认等待后续5帧。
+
+```bash
+python scripts/local/compare_variants.py --gpus 0 --seed 42
+```
+
+默认选择六条测试轨迹；通过 `--scenes SCENE_NAME ...` 指定场景，`--gpus 0 1 2` 使用多个GPU。后台运行示例：
+
+```bash
+tmux new -s pf-compare
+python scripts/local/compare_variants.py --gpus 0 1 2 --seed 42
+# 按 Ctrl+b，再按 d 脱离；重新查看：tmux attach -t pf-compare
+```
+
+输出保存在 `output/local/official_map_comparison/`，每条轨迹有四个方法目录、`comparison.json` 和 `comparison.png`。base与深度变体轨迹为 `pf_traj.csv`，短窗口轨迹为 `refined_traj.csv`。批量结束后生成 `summary.csv` 和 `RESULTS.md`，包含实际完成范围；中途错误记录在场景目录日志或 `*.failed.txt`。
+
+已有完整阶段会被复用；更换地图、权重、种子或参数时，用 `--output` 指定新的结果目录。本地输出用于开发验证，文档不固化最终测试指标。

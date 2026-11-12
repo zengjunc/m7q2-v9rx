@@ -3,7 +3,7 @@ experiment_name: "TartanDrive2"
 
 dataset:
   name: TartanDrive2
-  geotiff: data/TartanDrive2/gascola_EPSG32617_scale03_082725.tiff
+  geotiff: data/maps/gascola_EPSG32617_scale03_082725.tiff
   scenes:
     # LOCAL MODIFICATION: use config/dataset/tartandrive.yaml scene order.
     seen:

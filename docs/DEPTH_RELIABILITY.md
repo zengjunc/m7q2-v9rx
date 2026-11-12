@@ -17,7 +17,7 @@ python scripts/local/run.py pf --scene SCENE_NAME --mask-invalid-depth --seed 42
 python scripts/local/run.py pf --scene SCENE_NAME --stereo-pooling --seed 42 --output output/pf_stereo
 ```
 
-目前仅保留两个变体：`--mask-invalid-depth`（仅屏蔽）和 `--stereo-pooling`（屏蔽加软聚合），二者互斥，不传则为原版。仅屏蔽对应原框架配置 `model.mask_invalid_depth=true`。常规使用软聚合只需增加 `--stereo-pooling`。矛盾权重默认为0.25，需要调整时使用 `--stereo-conflict-weight 0.25`；不必与其他深度加权选项叠加。
+本模块提供两个深度开关：`--mask-invalid-depth`（仅屏蔽）和 `--stereo-pooling`（屏蔽加软聚合），二者互斥，不传则为原版。仅屏蔽对应原框架配置 `model.mask_invalid_depth=true`。常规使用软聚合只需增加 `--stereo-pooling`。矛盾权重默认为0.25，需要调整时使用 `--stereo-conflict-weight 0.25`；不必与其他深度加权选项叠加。
 
 对应原框架配置在 [config/sequence/tartandrive.yaml](../config/sequence/tartandrive.yaml)：
 
@@ -35,9 +35,9 @@ stereo_conflict_weight: 0.25
 3. 矛盾像素取q=0.25，一致与未知像素取q=1；无效深度不投影。
 4. 在原网络的聚合注意力上加入log(q)，继续原来的网格内归一化：
 
-\[
+$$
 F_g=\frac{\sum_{p\in g}a_pq_pf_p}{\sum_{p\in g}a_pq_p}.
-\]
+$$
 
 其中a是原学习权重，f是像素特征。q改变同一网格内不同观测的贡献比例；不直接乘卫星匹配分数，也不直接减弱整帧PF观测。所有点q相同时会在归一化中抵消，缺失深度不会被补全。
 
@@ -55,22 +55,6 @@ F_g=\frac{\sum_{p\in g}a_pq_pf_p}{\sum_{p\in g}a_pq_p}.
 
 首次启用会计算右视差，矛盾掩码保存在 `data/TartanDrive2/SCENE_NAME/stereo_conflict/`，之后直接复用。不修改color/left/right/depth源文件。更换左右图像、深度或一致性算法后删除该场景的stereo_conflict目录即可重算；单纯调整q不需要重算。默认只输出原有轨迹、指标、对比图及运行参数，不额外生成逐帧质量报告。
 
-## 已完成结果
+## 与其他改进的关系
 
-固定公开权重、seed=42、q=0.25，保留完整帧序列。以下为每轨迹RMSE的等权均值（米）：
-
-| 数据范围 | 原版 | 仅屏蔽无效深度 | 双目软聚合 |
-|---|---:|---:|---:|
-| seen测试，3条 | 2.2241 | 2.4414 | 2.3084 |
-| unseen测试，3条 | 5.4800 | 5.5676 | 4.7740 |
-| 测试合计，6条 | 3.8520 | 4.0045 | 3.5412 |
-| 官方训练划分，17条 | 30.5595 | 29.7236 | 19.9518 |
-
-六条测试中相对原版4条改善、相对仅屏蔽5条改善；17条训练轨迹分别为8条、12条。测试均值改善8.07%；训练均值改善34.71%，其下降主要由两条严重漂移案例贡献，全部逐轨迹结果继续保留。训练数据与测试数据分开报告。
-
-本地完整记录：
-
-- `output/local/stereo_pooling_six_routes_20261024/RESULTS.md`、`ANALYSIS.md`：六条测试。
-- `output/local/stereo_pooling_train_20261026/RESULTS.md`、`ANALYSIS.md`：17条训练轨迹。
-
-原版、仅屏蔽与软聚合的完整对照结果保留；旧支持度加权、小网络试验、重复试运行及旧缓存已清理。数据下载继续暂停。
+无效深度屏蔽只过滤投影像素，不删除整帧。短窗口修正位于轨迹输出层，与深度开关独立。四组对照使用 `scripts/local/compare_variants.py`，其中 `stereo` 组启用软聚合，`window` 组仅修正原版base轨迹。
